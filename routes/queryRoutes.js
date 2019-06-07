@@ -6,7 +6,7 @@ var Joi = require("joi")
 var Config = require("../config")
 var Controller = require("../controllers")
 
-var getQuery = {
+var postQuery = {
   method: "POST",
   path: "/api/query/",
   config: {
@@ -82,6 +82,6 @@ var uploadFile = {
 
 
 module.exports = [
-  getQuery,
+  postQuery,
   uploadFile
 ]
