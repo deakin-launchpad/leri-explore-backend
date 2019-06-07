@@ -6,10 +6,13 @@ var Parser = require("../lib/parser")
 
 
 var getResults = function (payload, callback) {
-
-  MODELS.UserSensor.findAll({ limit: 100, orer: "DESC" }).then(data => {
-    callback(null, data)
-  })
+  // if (!payload.query || payload.query === '') return
+  MODELS.UserSensor.findAll({ limit: 100, orer: "DESC" })
+    .then(data => {
+      callback(null, data)
+    }).catch(err => {
+      return callback(JSON.stringify(err))
+    })
 }
 
 function createObjFromRow(row) {
@@ -48,6 +51,8 @@ var uploadFile = function (payload, callback) {
       ]
     }).then(() => {
       callback()
+    }).catch(err => {
+      return callback(JSON.stringify(err))
     })
 
   })
