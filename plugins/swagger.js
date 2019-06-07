@@ -6,8 +6,8 @@ const Config = require('../config')
 const swaggerOptions = {
     pathPrefixSize: 2,
     info: {
-        'title': `${Config.APP_CONSTANTS.SERVER.APP_NAME} API Documentation`,
-        'description': `${Config.APP_CONSTANTS.SERVER.APP_NAME} API documentation.`,
+        'title': `${process.env.APP_NAME} API Documentation`,
+        'description': `${process.env.APP_NAME} API documentation.`,
         'version': '0.0.1'
     }
 };

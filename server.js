@@ -18,9 +18,9 @@ const init = async () => {
   //Create Server
   var server = new Hapi.Server({
     app: {
-      name: Config.APP_CONSTANTS.SERVER.appName
+      name: process.env.APP_NAME
     },
-    port: process.env.PORT || Config.APP_CONSTANTS.SERVER.PORTS.HAPI,
+    port: process.env.HAPI_PORT,
     routes: { cors: true }
   })
 
