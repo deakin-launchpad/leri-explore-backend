@@ -8,7 +8,7 @@ var Controller = require("../controllers")
 
 var postQuery = {
   method: "POST",
-  path: "/api/query/",
+  path: "/api/query",
   config: {
     description: "Query API",
     tags: ["api", "query"],
@@ -25,7 +25,7 @@ var postQuery = {
     },
     validate: {
       payload: {
-        query: Joi.string().required()
+        query: Joi.string().trim().required()
       },
       failAction: UniversalFunctions.failActionFunction
     },
@@ -40,13 +40,13 @@ var postQuery = {
 
 var uploadFile = {
   method: "POST",
-  path: "/api/upload/",
+  path: "/api/upload",
   config: {
     description: "Upload file API",
     tags: ["api", "upload"],
     payload: {
       maxBytes: 20715200,
-      output: 'stream',
+      output: 'file',
       parse: true,
       allow: 'multipart/form-data'
     },
