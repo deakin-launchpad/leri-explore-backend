@@ -30,7 +30,7 @@ function createObjFromRow(row) {
 }
 
 var uploadFile = function (payload, callback) {
-  Parser.processStream(payload, (err, data) => {
+  Parser.processFile(payload, (err, data) => {
     if (err) return callback(err)
 
     data = data.map(row => {
