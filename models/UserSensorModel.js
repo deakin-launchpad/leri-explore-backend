@@ -4,7 +4,7 @@ const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 class UserSensor extends Sequelize.Model { }
 UserSensor.init({
   user_id: Sequelize.STRING,
-  timestamp: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
+  timestamp: { type: 'TIMESTAMP', defaultValue: Sequelize.NOW },
   s1: Sequelize.INTEGER,
   s2: Sequelize.INTEGER,
   s3: Sequelize.INTEGER,
