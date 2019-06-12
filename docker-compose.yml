@@ -9,7 +9,7 @@ services:
       - DB_PASSWORD=password
       - DB_DATABASE=leri_explore_dev
       - DB_HOST=postgres_leri_dev
-    command: bash -c "node entry.js"
+    command: bash -c "node setup.js && node entry.js"
     ports:
       - "8000:8000"
     links:
