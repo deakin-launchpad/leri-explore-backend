@@ -1,6 +1,9 @@
 const debug = require('debug')('app:dbHelper')
+const MONGO = 'MONGO', PG = 'PG'
 
-var pgObj = null
+// Static connection objects.
+var DB_OBJECTS = {}
+
 module.exports = class DBHelper {
   constructor(db) {
     this.db = db
@@ -15,13 +18,13 @@ module.exports = class DBHelper {
         return process.exit(1)
       }
       debug('MongoDB connected, database:', this.db.database)
-      this.DB_OBJECT = mongoose
+      DB_OBJECTS[MONGO] = mongoose
       callback()
     })
   }
 
   dropMongooseDatabase(callback) {
-    this.DB_OBJECT.connection.db.dropDatabase((err) => {
+    DB_OBJECTS[MONGO].connection.db.dropDatabase((err) => {
       if (err) return callback(err)
       callback()
     })
@@ -29,19 +32,20 @@ module.exports = class DBHelper {
 
   connectPostgres(callback) {
     const Sequelize = require('sequelize')
-    pgObj = new Sequelize(this.getConnector(), {
+    DB_OBJECTS[PG] = new Sequelize(this.getConnector(), {
       pool: {
         max: parseInt(process.env.MAX_POOL_SIZE),
         min: 0 || parseInt(process.env.MIN_POOL_SIZE),
         acquire: 30000 || process.env.PG_CONN_ACQUIRE,
         idle: 10000 || process.env.PG_CONN_IDLE
-      }
+      },
+      // logging: false
     })
     callback()
   }
 
   dropPostgres(callback) {
-
+    // TODO: Implement for pg
   }
 
   getConnector() {
@@ -61,11 +65,11 @@ module.exports = class DBHelper {
   }
 
   isConnected() {
-    const DB_OBJECT = this.DB_OBJECT
     switch (this.db.adapter) {
       case 'mongodb':
-        // debug(DB_OBJECT)
+        let DB_OBJECT = DB_OBJECTS[MONGO]
         return (DB_OBJECT && DB_OBJECT.connection && DB_OBJECT.connection.readyState && DB_OBJECT.connection.readyState === 1)
+      // TODO: Implement for pg
     }
   }
 
@@ -84,8 +88,12 @@ module.exports = class DBHelper {
 
   }
 
+  static getMongoConnection() {
+    return DB_OBJECTS[MONGO]
+  }
+
   static getPGConnection() {
-    return pgObj // TODO: Make this better
+    return DB_OBJECTS[PG]
   }
 
   dropDatabase(callback) {

@@ -1,37 +1,72 @@
 const config = {
-  development: {
-    adapter: process.env.DB_ADAPTER,
-    database: process.env.DB_DATABASE,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT
+  MONGO: {
+    development: {
+      adapter: process.env.MONGO_DB_ADAPTER,
+      database: process.env.MONGO_DB_DATABASE,
+      username: process.env.MONGO_DB_USERNAME,
+      password: process.env.MONGO_DB_PASSWORD,
+      host: process.env.MONGO_DB_HOST,
+      port: process.env.MONGO_DB_PORT
+    },
+    test: {
+      adapter: process.env.MONGO_DB_ADAPTER,
+      database: process.env.MONGO_TEST_DB_DATABASE,
+      username: process.env.MONGO_DB_USERNAME,
+      password: process.env.MONGO_DB_PASSWORD,
+      host: process.env.MONGO_DB_HOST,
+      port: process.env.MONGO_DB_PORT
+    },
+    staging: {
+      adapter: process.env.MONGO_DB_ADAPTER,
+      database: process.env.MONGO_STAGING_DB_DATABASE,
+      username: process.env.MONGO_DB_USERNAME,
+      password: process.env.MONGO_DB_PASSWORD,
+      host: process.env.MONGO_DB_HOST,
+      port: process.env.MONGO_DB_PORT
+    },
+    production: {
+      adapter: process.env.MONGO_DB_ADAPTER,
+      database: process.env.MONGO_DB_DATABASE,
+      username: process.env.MONGO_DB_USERNAME,
+      password: process.env.MONGO_DB_PASSWORD,
+      host: process.env.MONGO_DB_HOST,
+      port: process.env.MONGO_DB_PORT
+    }
   },
-  test: {
-    adapter: process.env.DB_ADAPTER,
-    database: process.env.TEST_DB_DATABASE,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT
-  },
-  staging: {
-    adapter: process.env.DB_ADAPTER,
-    database: process.env.STAGING_DB_DATABASE,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT
-  },
-  production: {
-    adapter: process.env.DB_ADAPTER,
-    database: process.env.DB_DATABASE,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT
+  PG: {
+    development: {
+      adapter: process.env.PG_DB_ADAPTER,
+      database: process.env.PG_DB_DATABASE,
+      username: process.env.PG_DB_USERNAME,
+      password: process.env.PG_DB_PASSWORD,
+      host: process.env.PG_DB_HOST,
+      port: process.env.PG_DB_PORT
+    },
+    test: {
+      adapter: process.env.PG_DB_ADAPTER,
+      database: process.env.PG_TEST_DB_DATABASE,
+      username: process.env.PG_DB_USERNAME,
+      password: process.env.PG_DB_PASSWORD,
+      host: process.env.PG_DB_HOST,
+      port: process.env.PG_DB_PORT
+    },
+    staging: {
+      adapter: process.env.PG_DB_ADAPTER,
+      database: process.env.PG_STAGING_DB_DATABASE,
+      username: process.env.PG_DB_USERNAME,
+      password: process.env.PG_DB_PASSWORD,
+      host: process.env.PG_DB_HOST,
+      port: process.env.PG_DB_PORT
+    },
+    production: {
+      adapter: process.env.PG_DB_ADAPTER,
+      database: process.env.PG_DB_DATABASE,
+      username: process.env.PG_DB_USERNAME,
+      password: process.env.PG_DB_PASSWORD,
+      host: process.env.PG_DB_HOST,
+      port: process.env.PG_DB_PORT
+    }
   }
 }
 
-// module.exports = config[process.env.NODE_ENV || 'development'];
-module.exports = (env) => { return config[env] }
+module.exports = (adapter, env) => { return config[adapter][env] }

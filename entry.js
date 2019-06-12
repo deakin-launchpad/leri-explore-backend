@@ -1,17 +1,37 @@
 'use strict'
 // Read .env file.
 require('dotenv').config()
+const async = require('async')
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-// require(`./src/config/environments/${process.env.NODE_ENV}`)
 
-const db = require('./config/database')(process.env.NODE_ENV)
-const dbConnection = new (require('./utils/dbHelper'))(db)
+const dbHelper = require('./utils/dbHelper')
+const PGConfig = require('./config/database')('PG', process.env.NODE_ENV)
+const pgConnection = new (dbHelper)(PGConfig)
+
+const MongoConfig = require('./config/database')('MONGO', process.env.NODE_ENV)
+const mongoConnection = new (dbHelper)(MongoConfig)
 
 /**
- * This is required in all environments since this is what mongoose uses to establish connection to a MongoDB instance.
+ * This is required in all environments since this is what mongoose uses to establish connection to the required DB instances.
  */
-dbConnection.establishConnection((err) => {
-  if (err) throw err
-  require('./server')
-})
+
+async.parallel([
+  function (cb) {
+    pgConnection.establishConnection((err) => {
+      if (err) return cb(err)
+      cb()
+    })
+  },
+  function (cb) {
+    mongoConnection.establishConnection((err) => {
+      if (err) return cb(err)
+      cb()
+    })
+  }
+],
+  function (err) {
+    if (err) throw err
+    require('./server')
+  }
+)
