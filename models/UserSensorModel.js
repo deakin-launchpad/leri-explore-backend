@@ -16,7 +16,7 @@ UserSensor.init({
   s9: Sequelize.INTEGER,
 }, { sequelize: sequelizeInstance, modelName: 'user_sensor', timestamps: true })
 
-sequelizeInstance.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
+UserSensor.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
   .then(() => UserSensor.create({
     user_id: '12345',
     s1: 0,

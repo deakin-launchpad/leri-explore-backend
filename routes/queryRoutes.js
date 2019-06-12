@@ -1,21 +1,20 @@
 /**
  * Created by Navit on 15/11/16.
  */
-var UniversalFunctions = require("../utils/UniversalFunctions")
-var Joi = require("joi")
-var Config = require("../config")
-var Controller = require("../controllers")
+const UniversalFunctions = require("../utils/UniversalFunctions")
+const Joi = require("joi")
+const Config = require("../config")
+const Controllers = require("../controllers")
 
-var postQuery = {
-  method: "POST",
-  path: "/api/query",
+const getAgeActivityRanges = {
+  method: "GET",
+  path: "/api/age_activity_ranges/{age}",
   config: {
-    description: "Query API",
+    description: "Query API step 1",
     tags: ["api", "query"],
     handler: function (request, h) {
-      var payload = request.payload
       return new Promise((resolve, reject) => {
-        Controller.QueryController.getResults(payload, function (err, data) {
+        Controllers.QueryController.getAgeActivityRanges(request.params, function (err, data) {
           if (err) return reject(UniversalFunctions.sendError(err))
           resolve(
             UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -24,8 +23,8 @@ var postQuery = {
       })
     },
     validate: {
-      payload: {
-        query: Joi.string().trim().required()
+      params: {
+        age: Joi.number().required()
       },
       failAction: UniversalFunctions.failActionFunction
     },
@@ -38,7 +37,40 @@ var postQuery = {
   }
 }
 
-var uploadFile = {
+const postQuery = {
+  method: "POST",
+  path: "/api/query",
+  config: {
+    description: "Query API",
+    tags: ["api", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        Controllers.QueryController.getResults(request.payload, function (err, data) {
+          if (err) return reject(UniversalFunctions.sendError(err))
+          resolve(
+            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      payload: {
+        groups: Joi.array().items(Joi.string()),
+        cases: Joi.string().trim().required(),
+        sensor: Joi.number().required()
+      },
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
+const uploadFile = {
   method: "POST",
   path: "/api/upload",
   config: {
@@ -52,9 +84,9 @@ var uploadFile = {
     },
 
     handler: function (request, h) {
-      var payload = request.payload
+      const payload = request.payload
       return new Promise((resolve, reject) => {
-        Controller.QueryController.uploadFile(payload, function (err, data) {
+        Controllers.QueryController.uploadFile(payload, function (err, data) {
           if (err) return reject(UniversalFunctions.sendError(err))
           resolve(
             UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -82,6 +114,7 @@ var uploadFile = {
 
 
 module.exports = [
+  getAgeActivityRanges,
   postQuery,
   uploadFile
 ]
