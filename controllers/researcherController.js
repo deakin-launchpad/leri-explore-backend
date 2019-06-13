@@ -3,10 +3,10 @@ Created by Sanchit Dang
 */
 
 const SERVICES = require('../services')
-const UniversalFunctions = require('../utils/UniversalFunctions')
+const HELPER = require('../utils/helper')
 const async = require('async')
 const TokenManager = require('../lib/TokenManager')
-const ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
+const ERROR = HELPER.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
 const CONFIG = require('../config')
 
 const researcherRegister = (payload, callback) => {
@@ -14,7 +14,7 @@ const researcherRegister = (payload, callback) => {
   let dataToSave = payload
   let userFound
   if (dataToSave.password)
-    dataToSave.password = UniversalFunctions.CryptData(dataToSave.password)
+    dataToSave.password = HELPER.CryptData(dataToSave.password)
   async.series([
     function (cb) {
       query = { emailId: payload.emailId }
@@ -87,7 +87,7 @@ const researcherLogin = (payload, callback) => {
     },
     function (cb) {
       if (!userFound) return cb(ERROR.USER_NOT_FOUND)
-      if (userFound && userFound.password !== UniversalFunctions.CryptData(payload.password)) return cb(ERROR.INCORRECT_PASSWORD)
+      if (userFound && userFound.password !== HELPER.CryptData(payload.password)) return cb(ERROR.INCORRECT_PASSWORD)
 
       successLogin = true
       cb()
@@ -122,7 +122,7 @@ const researcherLogin = (payload, callback) => {
       
       callback(null, {
         accessToken: accessToken,
-        ResearcherDetails: UniversalFunctions.deleteUnnecessaryUserData(userFound)
+        ResearcherDetails: HELPER.deleteUnnecessaryUserData(userFound)
       })
     })
 }

@@ -1,4 +1,4 @@
-const UniversalFunctions = require("../utils/UniversalFunctions")
+const HELPER = require("../utils/helper")
 const Joi = require("joi")
 const Config = require("../config")
 const Controllers = require("../controllers")
@@ -11,14 +11,14 @@ const researcherLogin = {
     tags: ["api", "researcher"],
     handler: (request, reply) => {
       return new Promise((resolve, reject) => {
-        if (!UniversalFunctions.verifyEmailFormat(request.payload.emailId))
-          return reject(UniversalFunctions.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
+        if (!HELPER.verifyEmailFormat(request.payload.emailId))
+          return reject(HELPER.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
 
         Controllers.ResearcherController.researcherLogin(request.payload, function (err, data) {
-          if (err) return reject(UniversalFunctions.sendError(err))
+          if (err) return reject(HELPER.sendError(err))
 
           resolve(
-            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
       })
@@ -28,12 +28,12 @@ const researcherLogin = {
         emailId: Joi.string().required(),
         password: Joi.string().required()
       },
-      failAction: UniversalFunctions.failActionFunction
+      failAction: HELPER.failActionFunction
     },
     plugins: {
       "hapi-swagger": {
         responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
       }
     }
   }
@@ -47,14 +47,14 @@ const researcherRegister = {
     tags: ["api", "researcher"],
     handler: (request, h) => {
       return new Promise((resolve, reject) => {
-        if (!UniversalFunctions.verifyEmailFormat(request.payload.emailId))
-          return reject(UniversalFunctions.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
+        if (!HELPER.verifyEmailFormat(request.payload.emailId))
+          return reject(HELPER.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
 
         Controllers.ResearcherController.researcherRegister(request.payload, function (err, data) {
-          if (err) return reject(UniversalFunctions.sendError(err))
+          if (err) return reject(HELPER.sendError(err))
 
           resolve(
-            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
       })
@@ -66,12 +66,12 @@ const researcherRegister = {
         emailId: Joi.string().required(),
         password: Joi.string().required()
       },
-      failAction: UniversalFunctions.failActionFunction
+      failAction: HELPER.failActionFunction
     },
     plugins: {
       "hapi-swagger": {
         responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
       }
     }
   }

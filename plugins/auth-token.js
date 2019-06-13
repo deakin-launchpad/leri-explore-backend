@@ -4,7 +4,7 @@
  */
 
 var TokenManager = require('../lib/TokenManager');
-var UniversalFunc = require('../utils/UniversalFunctions');
+var HELPER = require('../utils/helper');
 
 exports.register = function (server, options, next) {
 

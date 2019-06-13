@@ -1,7 +1,7 @@
 /**
  * Created by Navit on 15/11/16.
  */
-const UniversalFunctions = require("../utils/UniversalFunctions")
+const HELPER = require("../utils/helper")
 const Joi = require("joi")
 const Config = require("../config")
 const Controllers = require("../controllers")
@@ -15,9 +15,9 @@ const getAgeActivityRanges = {
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
         Controllers.QueryController.getAgeActivityRanges(request.params, function (err, data) {
-          if (err) return reject(UniversalFunctions.sendError(err))
+          if (err) return reject(HELPER.sendError(err))
           resolve(
-            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
       })
@@ -26,12 +26,12 @@ const getAgeActivityRanges = {
       params: {
         age: Joi.number().required()
       },
-      failAction: UniversalFunctions.failActionFunction
+      failAction: HELPER.failActionFunction
     },
     plugins: {
       "hapi-swagger": {
         responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
       }
     }
   }
@@ -46,9 +46,9 @@ const postQuery = {
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
         Controllers.QueryController.getResults(request.payload, function (err, data) {
-          if (err) return reject(UniversalFunctions.sendError(err))
+          if (err) return reject(HELPER.sendError(err))
           resolve(
-            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
       })
@@ -59,12 +59,12 @@ const postQuery = {
         cases: Joi.string().trim().required(),
         sensor: Joi.number().required()
       },
-      failAction: UniversalFunctions.failActionFunction
+      failAction: HELPER.failActionFunction
     },
     plugins: {
       "hapi-swagger": {
         responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
       }
     }
   }
@@ -87,9 +87,9 @@ const uploadFile = {
       const payload = request.payload
       return new Promise((resolve, reject) => {
         Controllers.QueryController.uploadFile(payload, function (err, data) {
-          if (err) return reject(UniversalFunctions.sendError(err))
+          if (err) return reject(HELPER.sendError(err))
           resolve(
-            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
       })
@@ -101,12 +101,12 @@ const uploadFile = {
           .required()
           .description('Data file')
       },
-      failAction: UniversalFunctions.failActionFunction
+      failAction: HELPER.failActionFunction
     },
     plugins: {
       "hapi-swagger": {
         responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
       }
     }
   }
