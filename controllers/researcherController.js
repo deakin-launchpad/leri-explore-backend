@@ -53,7 +53,7 @@ const researcherRegister = (payload, callback) => {
       }
       SERVICES.ResearcherService.getRecord(criteria, {}, {}, (err, data) => {
         if (err) return cb(err)
-        if (data || data.length === 0) return cb("USER NOT FOUND")
+        if (!data || data.length === 0) return cb("USER NOT FOUND")
 
         userFound = data[0]
         cb()
@@ -64,7 +64,6 @@ const researcherRegister = (payload, callback) => {
       if (err) return callback(err)
 
       callback(null, {
-        accessToken: accessToken,
         ResearcherDetails: userFound
       })
     })
@@ -110,7 +109,7 @@ const researcherLogin = (payload, callback) => {
       let criteria = { _id: userFound._id }
       SERVICES.ResearcherService.getRecord(criteria, {}, {}, (err, data) => {
         if (err) return cb(err)
-        if (data || data.length === 0) return cb("USER NOT FOUND")
+        if (!data || data.length === 0) return cb("USER NOT FOUND")
 
         userFound = data[0]
         cb()
@@ -121,7 +120,6 @@ const researcherLogin = (payload, callback) => {
       if (err) return callback(err)
       
       callback(null, {
-        accessToken: accessToken,
         ResearcherDetails: HELPER.deleteUnnecessaryUserData(userFound)
       })
     })
