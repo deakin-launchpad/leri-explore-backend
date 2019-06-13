@@ -4,5 +4,6 @@
 'use strict'
 
 var QueryRoutes = require('./queryRoutes');
-var APIs = [].concat(QueryRoutes);
+var ResearcherRoutes = require('./researcherRoutes');
+var APIs = [].concat(QueryRoutes, ResearcherRoutes);
 module.exports = APIs;
