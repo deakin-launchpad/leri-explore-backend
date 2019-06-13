@@ -2,12 +2,12 @@
 Created by Sanchit Dang
 */
 
-var SERVICES = require('../services');
-var UniversalFunctions = require('../utils/UniversalFunctions');
-var async = require('async');
-var TokenManager = require('../lib/TokenManager');
-var ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR;
-var CONFIG = require('../config')
+const SERVICES = require('../services');
+const UniversalFunctions = require('../utils/UniversalFunctions');
+const async = require('async');
+const TokenManager = require('../lib/TokenManager');
+const ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR;
+const CONFIG = require('../config')
 
 const researcherRegister = (payload, callback) => {
   let accessToken = null;
@@ -16,7 +16,7 @@ const researcherRegister = (payload, callback) => {
   if (dataToSave.password)
     dataToSave.password = UniversalFunctions.CryptData(dataToSave.password);
   async.series([
-    (cb) => {
+    function (cb) {
       query = { emailId: payload.emailId }
       SERVICES.ResearcherService.getRecord(query, {}, {}, (error, data) => {
         if (error)
@@ -26,7 +26,7 @@ const researcherRegister = (payload, callback) => {
           else cb(null);
       })
     },
-    (cb) => {
+    function (cb) {
       SERVICES.ResearcherService.createRecord(dataToSave, (error, DataFromDB) => {
         if (error) cb(error);
         else {
@@ -34,7 +34,8 @@ const researcherRegister = (payload, callback) => {
           cb();
         }
       })
-    }, (cb) => {
+    },
+    function (cb) {
       if (userFound) {
         let tokenData = {
           id: userFound._id,
@@ -49,7 +50,7 @@ const researcherRegister = (payload, callback) => {
         })
       } else cb(ERROR.IMP_ERROR)
     },
-    (cb) => {
+    function (cb) {
       let criteria = {
         _id: userFound._id
       };
@@ -60,13 +61,14 @@ const researcherRegister = (payload, callback) => {
         } else cb(error)
       });
     }
-  ], (error, data) => {
-    if (error) return callback(error);
-    else return callback(null, {
-      accessToken: accessToken,
-      ResearcherDetails: userFound
+  ],
+    function (err) {
+      if (err) return callback(err);
+      else return callback(null, {
+        accessToken: accessToken,
+        ResearcherDetails: userFound
+      });
     });
-  });
 }
 
 
@@ -75,7 +77,7 @@ const researcherLogin = (payload, callback) => {
   var accessToken = null;
   var successLogin = false;
   async.series([
-    (cb) => {
+    function (cb) {
       query = { emailId: payload.emailId };
       SERVICES.ResearcherService.getRecord(query, {}, {}, (error, result) => {
         if (error) cb(error)
@@ -84,7 +86,8 @@ const researcherLogin = (payload, callback) => {
           cb();
         }
       })
-    }, (cb) => {
+    },
+    function (cb) {
       if (!userFound) cb(ERROR.USER_NOT_FOUND);
       else {
         if (userFound && userFound.password !== UniversalFunctions.CryptData(payload.password)) cb(ERROR.INCORRECT_PASSWORD);
@@ -93,7 +96,8 @@ const researcherLogin = (payload, callback) => {
           cb();
         }
       }
-    }, (cb) => {
+    },
+    function (cb) {
       if (successLogin) {
         let tokenData = {
           id: userFound._id,
@@ -107,7 +111,8 @@ const researcherLogin = (payload, callback) => {
           }
         })
       } else cb(ERROR.IMP_ERROR)
-    }, (cb) => {
+    },
+    function (cb) {
       let criteria = { _id: userFound._id };
       SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
         if (data && data[0]) {
@@ -116,13 +121,14 @@ const researcherLogin = (payload, callback) => {
         } else cb(error);
       })
     }
-  ], (error, result) => {
-    if (error) return callback(error)
-    else return callback(null, {
-      accessToken: accessToken,
-      ResearcherDetails: UniversalFunctions.deleteUnnecessaryUserData(userFound)
+  ],
+    function (err) {
+      if (err) return callback(err)
+      else return callback(null, {
+        accessToken: accessToken,
+        ResearcherDetails: UniversalFunctions.deleteUnnecessaryUserData(userFound)
+      })
     })
-  })
 }
 
 module.exports = {
