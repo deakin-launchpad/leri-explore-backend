@@ -19,52 +19,51 @@ const researcherRegister = (payload, callback) => {
     function (cb) {
       query = { emailId: payload.emailId }
       SERVICES.ResearcherService.getRecord(query, {}, {}, (error, data) => {
-        if (error)
-          cb(error);
-        else
-          if (data && data.length > 0) cb(ERROR.USER_ALREADY_REGISTERED);
-          else cb(null);
+        if (error) return cb(error);
+        if (data && data.length > 0) return cb(ERROR.USER_ALREADY_REGISTERED);
+
+        cb();
       })
     },
     function (cb) {
       SERVICES.ResearcherService.createRecord(dataToSave, (error, DataFromDB) => {
-        if (error) cb(error);
-        else {
-          userFound = DataFromDB;
-          cb();
-        }
+        if (error) return cb(error);
+
+        userFound = DataFromDB;
+        cb();
       })
     },
     function (cb) {
-      if (userFound) {
-        let tokenData = {
-          id: userFound._id,
-          type: CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.RESEARCHER
-        };
-        TokenManager.setToken(tokenData, (error, output) => {
-          if (error) cb(error);
-          else {
-            accessToken = output && output.accessToken || null;
-            cb();
-          }
-        })
-      } else cb(ERROR.IMP_ERROR)
+      if (!userFound) return cb(ERROR.IMP_ERROR)
+
+      let tokenData = {
+        id: userFound._id,
+        type: CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.RESEARCHER
+      };
+      TokenManager.setToken(tokenData, (error, output) => {
+        if (error) return cb(error);
+
+        accessToken = output && output.accessToken || null;
+        cb();
+      })
     },
     function (cb) {
       let criteria = {
         _id: userFound._id
       };
       SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
-        if (data && data[0]) {
-          userFound = data[0];
-          cb();
-        } else cb(error)
+        if (err) return cb(err)
+        if (data || data.length === 0) return cb("USER NOT FOUND")
+
+        userFound = data[0];
+        cb();
       });
     }
   ],
     function (err) {
       if (err) return callback(err);
-      else return callback(null, {
+
+      callback(null, {
         accessToken: accessToken,
         ResearcherDetails: userFound
       });
@@ -79,52 +78,49 @@ const researcherLogin = (payload, callback) => {
   async.series([
     function (cb) {
       query = { emailId: payload.emailId };
-      SERVICES.ResearcherService.getRecord(query, {}, {}, (error, result) => {
-        if (error) cb(error)
-        else {
-          userFound = result && result[0] || null;
-          cb();
-        }
+      SERVICES.ResearcherService.getRecord(query, {}, {}, (err, result) => {
+        if (err) return cb(err)
+
+        userFound = result && result[0] || null;
+        cb();
       })
     },
     function (cb) {
-      if (!userFound) cb(ERROR.USER_NOT_FOUND);
-      else {
-        if (userFound && userFound.password !== UniversalFunctions.CryptData(payload.password)) cb(ERROR.INCORRECT_PASSWORD);
-        else {
-          successLogin = true;
-          cb();
-        }
-      }
+      if (!userFound) return cb(ERROR.USER_NOT_FOUND);
+      if (userFound && userFound.password !== UniversalFunctions.CryptData(payload.password)) return cb(ERROR.INCORRECT_PASSWORD);
+
+      successLogin = true;
+      cb();
     },
     function (cb) {
-      if (successLogin) {
-        let tokenData = {
-          id: userFound._id,
-          type: CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.RESEARCHER
-        };
-        TokenManager.setToken(tokenData, (error, output) => {
-          if (error) cb(error)
-          else {
-            accessToken = output && output.accessToken || null;
-            cb();
-          }
-        })
-      } else cb(ERROR.IMP_ERROR)
+      if (!successLogin) return cb(ERROR.IMP_ERROR)
+
+      let tokenData = {
+        id: userFound._id,
+        type: CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.RESEARCHER
+      };
+      TokenManager.setToken(tokenData, (err, output) => {
+        if (err) return cb(err)
+
+        accessToken = output && output.accessToken || null;
+        cb();
+      })
     },
     function (cb) {
       let criteria = { _id: userFound._id };
-      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
-        if (data && data[0]) {
-          userFound = data[0];
-          cb();
-        } else cb(error);
+      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (err, data) => {
+        if (err) return cb(err)
+        if (data || data.length === 0) return cb("USER NOT FOUND")
+
+        userFound = data[0];
+        cb();
       })
     }
   ],
     function (err) {
       if (err) return callback(err)
-      else return callback(null, {
+      
+      callback(null, {
         accessToken: accessToken,
         ResearcherDetails: UniversalFunctions.deleteUnnecessaryUserData(userFound)
       })
