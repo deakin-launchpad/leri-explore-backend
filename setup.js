@@ -1,6 +1,6 @@
 require('dotenv').config()
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-const db = require('./src/config/database')('MONGO', process.env.NODE_ENV)
+const db = require('./config/database')('MONGO', process.env.NODE_ENV)
 const async = require('async')
 const mongoose = require('mongoose')
 
