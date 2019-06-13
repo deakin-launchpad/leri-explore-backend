@@ -18,16 +18,16 @@ const researcherRegister = (payload, callback) => {
   async.series([
     function (cb) {
       query = { emailId: payload.emailId }
-      SERVICES.ResearcherService.getRecord(query, {}, {}, (error, data) => {
-        if (error) return cb(error)
+      SERVICES.ResearcherService.getRecord(query, {}, {}, (err, data) => {
+        if (err) return cb(err)
         if (data && data.length > 0) return cb(ERROR.USER_ALREADY_REGISTERED)
 
         cb()
       })
     },
     function (cb) {
-      SERVICES.ResearcherService.createRecord(dataToSave, (error, DataFromDB) => {
-        if (error) return cb(error)
+      SERVICES.ResearcherService.createRecord(dataToSave, (err, DataFromDB) => {
+        if (err) return cb(err)
 
         userFound = DataFromDB
         cb()
@@ -40,8 +40,8 @@ const researcherRegister = (payload, callback) => {
         id: userFound._id,
         type: CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.RESEARCHER
       }
-      TokenManager.setToken(tokenData, (error, output) => {
-        if (error) return cb(error)
+      TokenManager.setToken(tokenData, (err, output) => {
+        if (err) return cb(err)
 
         accessToken = output && output.accessToken || null
         cb()
@@ -51,7 +51,7 @@ const researcherRegister = (payload, callback) => {
       let criteria = {
         _id: userFound._id
       }
-      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
+      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (err, data) => {
         if (err) return cb(err)
         if (data || data.length === 0) return cb("USER NOT FOUND")
 
