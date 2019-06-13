@@ -1,7 +1,7 @@
 const debug = require('debug')('app:genricDBService')
 const MONGO_MODELS = require('./models/mongo');
 
-module.exports = class GenericDBService {
+module.exports = class MongoDBGenericService {
   constructor(name) {
     if (!this.isValidModelName(name)) throw "Invalid model name '" + name + "'. Terminating app..."
 

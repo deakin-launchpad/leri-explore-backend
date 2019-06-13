@@ -1,5 +1,5 @@
-const GenericDBService = require('./MongoDBService')
+const MongoDBGenericService = require('./MongoDBGenericService')
 
 module.exports = {
-  ResearcherService: new GenericDBService("Researcher")
+  ResearcherService: new MongoDBGenericService("Researcher")
 }
