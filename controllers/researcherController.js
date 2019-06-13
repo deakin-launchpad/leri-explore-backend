@@ -2,7 +2,7 @@
 Created by Sanchit Dang
 */
 
-var Service = require('../services');
+var SERVICES = require('../services');
 var UniversalFunctions = require('../utils/UniversalFunctions');
 var async = require('async');
 var TokenManager = require('../lib/TokenManager');
@@ -18,7 +18,7 @@ const researcherRegister = (payload, callback) => {
   async.series([
     (cb) => {
       query = { emailId: payload.emailId }
-      Service.ResearcherService.getRecord(query, {}, {}, (error, data) => {
+      SERVICES.ResearcherService.getRecord(query, {}, {}, (error, data) => {
         if (error)
           cb(error);
         else
@@ -27,7 +27,7 @@ const researcherRegister = (payload, callback) => {
       })
     },
     (cb) => {
-      Service.ResearcherService.createRecord(dataToSave, (error, DataFromDB) => {
+      SERVICES.ResearcherService.createRecord(dataToSave, (error, DataFromDB) => {
         if (error) cb(error);
         else {
           userFound = DataFromDB;
@@ -53,7 +53,7 @@ const researcherRegister = (payload, callback) => {
       let criteria = {
         _id: userFound._id
       };
-      Service.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
+      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
         if (data && data[0]) {
           userFound = data[0];
           cb();
@@ -77,7 +77,7 @@ const researcherLogin = (payload, callback) => {
   async.series([
     (cb) => {
       query = { emailId: payload.emailId };
-      Service.ResearcherService.getRecord(query, {}, {}, (error, result) => {
+      SERVICES.ResearcherService.getRecord(query, {}, {}, (error, result) => {
         if (error) cb(error)
         else {
           userFound = result && result[0] || null;
@@ -109,7 +109,7 @@ const researcherLogin = (payload, callback) => {
       } else cb(ERROR.IMP_ERROR)
     }, (cb) => {
       let criteria = { _id: userFound._id };
-      Service.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
+      SERVICES.ResearcherService.getRecord(criteria, {}, {}, (error, data) => {
         if (data && data[0]) {
           userFound = data[0];
           cb();

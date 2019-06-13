@@ -1,5 +1,5 @@
 const debug = require('debug')('app:genricDBService')
-const MODELS = require('./models');
+const MONGO_MODELS = require('./models/mongo');
 
 module.exports = class GenericDBService {
   constructor(name) {
@@ -10,7 +10,7 @@ module.exports = class GenericDBService {
   }
 
   isValidModelName(name) {
-    return !(!name || 0 === name.length || !MODELS.hasOwnProperty(name))
+    return !(!name || 0 === name.length || !MONGO_MODELS.hasOwnProperty(name))
   }
 
   // Update a record in DB
@@ -18,26 +18,26 @@ module.exports = class GenericDBService {
     options.lean = true;
     options.new = true;
     dataToSet.updatedAt = (new Date()).toISOString();
-    MODELS[this.name].findOneAndUpdate(criteria, dataToSet, options, callback);
+    MONGO_MODELS[this.name].findOneAndUpdate(criteria, dataToSet, options, callback);
   }
   //Update all the records 
   updateAllRecords(criteria,dataToSet,options,callback){
     options.new = true
     options.multi = true
     dataToSet.updatedAt = (new Date()).toISOString();
-    MODELS[this.name].update(criteria, dataToSet, options, callback);
+    MONGO_MODELS[this.name].update(criteria, dataToSet, options, callback);
   }
 
   rawUpdateRecord(criteria, dataToSet, options, callback) {
     options.lean = true;
     options.new = true;
     dataToSet.updatedAt = (new Date()).toISOString();
-    MODELS[this.name].updateOne(criteria, dataToSet, options, callback);
+    MONGO_MODELS[this.name].updateOne(criteria, dataToSet, options, callback);
   }
 
   // Insert a record in DB
   createRecord(objToSave, callback) {
-    new MODELS[this.name](objToSave).save(callback);
+    new MONGO_MODELS[this.name](objToSave).save(callback);
   }
 
   insertManyAsync(objects, callback) {
@@ -46,7 +46,7 @@ module.exports = class GenericDBService {
       return this.dbObjects = []
     }
 
-    new MODELS[this.name](objects[0]).save((err, data) => {
+    new MONGO_MODELS[this.name](objects[0]).save((err, data) => {
       if (err) debug(err)
 
       this.dbObjects.push(data)
@@ -57,12 +57,12 @@ module.exports = class GenericDBService {
 
   // Delete a record in DB
   deleteRecord(criteria, callback) {
-    MODELS[this.name].findOneAndRemove(criteria, callback);
+    MONGO_MODELS[this.name].findOneAndRemove(criteria, callback);
   }
 
   // Get multiple records from DB
   getRecord(criteria, projection, options, callback) {
     options.lean = true;
-    MODELS[this.name].find(criteria, projection, options, callback);
+    MONGO_MODELS[this.name].find(criteria, projection, options, callback);
   }
 }
