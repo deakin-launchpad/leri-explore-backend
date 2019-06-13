@@ -12,7 +12,7 @@ module.exports = class DBHelper {
 
   connectMongoose(callback) {
     const mongoose = require('mongoose')
-    mongoose.connect(this.getConnector(), (err) => {
+    mongoose.connect(this.getConnector(),{ useNewUrlParser: true }, (err) => {
       if (err) {
         console.log("\n\nDB Error: ", err)
         return process.exit(1)
@@ -39,7 +39,7 @@ module.exports = class DBHelper {
         acquire: 30000 || process.env.PG_CONN_ACQUIRE,
         idle: 10000 || process.env.PG_CONN_IDLE
       },
-      // logging: false
+      logging: false
     })
     callback()
   }

@@ -1,5 +1,5 @@
 module.exports = {
-  UserSensor: require('./UserSensorModel'),
-  AgeRangeLookup: require('./AgeRangeLookupModel')
+  ...require('./pg'),
+  ...require('./mongo')
 }
 

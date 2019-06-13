@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
+const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 
 class UserSensor extends Sequelize.Model { }
 UserSensor.init({

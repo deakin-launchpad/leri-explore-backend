@@ -16,7 +16,8 @@ const DATABASE = {
     IOS: "IOS"
   },
   USER_ROLES: {
-    USER: "USER"
+    USER: "USER",
+    RESEARCHER: "RESEARCHER"
   }
 };
 
@@ -235,7 +236,7 @@ const TIME_UNITS = {
   DAYS: 'days'
 };
 
-const CUSTOM_ERROR_404 = function(msg) {
+const CUSTOM_ERROR_404 = function (msg) {
   return {
     statusCode: 404,
     customMessage: msg + ' NOT FOUND',
@@ -243,7 +244,7 @@ const CUSTOM_ERROR_404 = function(msg) {
   }
 }
 
-const CUSTOM_ERROR = function(msg, statusCode) {
+const CUSTOM_ERROR = function (msg, statusCode) {
   return {
     statusCode: statusCode || 400,
     customMessage: msg
