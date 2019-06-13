@@ -13,13 +13,14 @@ const researcherLogin = {
       return new Promise((resolve, reject) => {
         if (!UniversalFunctions.verifyEmailFormat(request.payload.emailId))
           return reject(UniversalFunctions.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
-        else
-          Controllers.ResearcherController.researcherLogin(request.payload, function (err, data) {
-            if (err) return reject(UniversalFunctions.sendError(err))
-            resolve(
-              UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
-            )
-          })
+
+        Controllers.ResearcherController.researcherLogin(request.payload, function (err, data) {
+          if (err) return reject(UniversalFunctions.sendError(err))
+
+          resolve(
+            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
       })
     },
     validate: {
@@ -48,13 +49,14 @@ const researcherRegister = {
       return new Promise((resolve, reject) => {
         if (!UniversalFunctions.verifyEmailFormat(request.payload.emailId))
           return reject(UniversalFunctions.sendError(Config.APP_CONSTANTS.STATUS_MSG.ERROR.INVALID_EMAIL_FORMAT));
-        else
-          Controllers.ResearcherController.researcherRegister(request.payload, function (err, data) {
-            if (err) return reject(UniversalFunctions.sendError(err))
-            resolve(
-              UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
-            )
-          })
+
+        Controllers.ResearcherController.researcherRegister(request.payload, function (err, data) {
+          if (err) return reject(UniversalFunctions.sendError(err))
+
+          resolve(
+            UniversalFunctions.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
       })
     },
     validate: {
