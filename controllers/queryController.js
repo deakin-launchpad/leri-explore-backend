@@ -2,7 +2,7 @@ const MODELS = require('../models')
 const Parser = require("../lib/parser")
 const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 
-const getAgeActivityRanges = function (params, callback) {
+module.exports.getAgeActivityRanges = function (params, callback) {
   MODELS.AgeRangeLookup.findAll({
     where: {
       age: params.age
@@ -15,8 +15,21 @@ const getAgeActivityRanges = function (params, callback) {
     })
 }
 
+module.exports.getQueries = function (callback) {
+  MODELS.ResearcherQueries.findAll({
+    limit: 100,
+    order: [
+      ['id', 'DESC']
+    ]
+  })
+    .then(data => {
+      callback(null, data)
+    }).catch(err => {
+      callback(JSON.stringify(err))
+    })
+}
 
-const getResults = function (payload, callback) {
+module.exports.getResults = function (payload, callback) {
 
   let projections = [], groupBys = [], prepareCases = []
 
@@ -43,8 +56,8 @@ const getResults = function (payload, callback) {
 
   payload.cases.forEach(item => {
     if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
-    else if (item.min)        prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
-    else if (item.max)        prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
+    else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
+    else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
   })
 
   let query = `select \
@@ -79,12 +92,18 @@ const getResults = function (payload, callback) {
     // MODELS.UserSensor.findAll({ limit: 100, orer: "DESC" })
     .then(data => {
       callback(null, data)
+    }).then(() => {
+      MODELS.ResearcherQueries.create({
+        query: {
+          ...payload
+        }
+      })
     }).catch(err => {
       callback(JSON.stringify(err))
     })
 }
 
-const uploadFile = function (payload, callback) {
+module.exports.uploadFile = function (payload, callback) {
   Parser.processFile(payload, (err, data) => {
     if (err) return callback(err)
 
@@ -108,10 +127,4 @@ const uploadFile = function (payload, callback) {
     })
 
   })
-}
-
-module.exports = {
-  getAgeActivityRanges: getAgeActivityRanges,
-  getResults: getResults,
-  uploadFile: uploadFile
 }

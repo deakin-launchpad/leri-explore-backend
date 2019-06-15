@@ -37,11 +37,39 @@ const getAgeActivityRanges = {
   }
 }
 
+const getQueries = {
+  method: "GET",
+  path: "/api/queries",
+  config: {
+    description: "Get queries",
+    tags: ["api", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        Controllers.QueryController.getQueries(function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
 const postQuery = {
   method: "POST",
   path: "/api/query",
   config: {
-    description: "Query API",
+    description: "Query API step 2",
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -120,6 +148,7 @@ const uploadFile = {
 
 module.exports = [
   getAgeActivityRanges,
+  getQueries,
   postQuery,
   uploadFile
 ]
