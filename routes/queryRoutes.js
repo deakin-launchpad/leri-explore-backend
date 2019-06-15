@@ -56,7 +56,12 @@ const postQuery = {
     validate: {
       payload: {
         groups: Joi.array().items(Joi.string()),
-        cases: Joi.string().trim().required(),
+        cases: Joi.array().items(Joi.object().keys(
+          {
+            min: Joi.number(),
+            max: Joi.number()
+          }
+        )),
         sensor: Joi.number().required()
       },
       failAction: HELPER.failActionFunction
