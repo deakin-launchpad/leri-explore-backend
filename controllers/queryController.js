@@ -11,13 +11,14 @@ const getAgeActivityRanges = function (params, callback) {
     .then(data => {
       callback(null, data)
     }).catch(err => {
-      return callback(JSON.stringify(err))
+      callback(JSON.stringify(err))
     })
 }
 
+
 const getResults = function (payload, callback) {
 
-  let projections = [], groupBys = []
+  let projections = [], groupBys = [], prepareCases = []
 
   payload.groups.forEach(group => {
     switch (group) {
@@ -40,6 +41,12 @@ const getResults = function (payload, callback) {
     }
   })
 
+  payload.cases.forEach(item => {
+    if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
+    else if (item.min)        prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
+    else if (item.max)        prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
+  })
+
   let query = `select \
 	${projections.join(', ')}, \
 	t.range as ranges, \
@@ -47,7 +54,7 @@ const getResults = function (payload, callback) {
 	count(*)*15 as "total_duration(in seconds)" \
   from ( \
       select case \
-      ${payload.cases} \
+      ${prepareCases.join(' ')} \
       end as range, \
       foo.tstp as tstp \
       from ( \
@@ -73,7 +80,7 @@ const getResults = function (payload, callback) {
     .then(data => {
       callback(null, data)
     }).catch(err => {
-      return callback(JSON.stringify(err))
+      callback(JSON.stringify(err))
     })
 }
 
@@ -97,7 +104,7 @@ const uploadFile = function (payload, callback) {
     }).then(() => {
       callback()
     }).catch(err => {
-      return callback(JSON.stringify(err))
+      callback(JSON.stringify(err))
     })
 
   })
