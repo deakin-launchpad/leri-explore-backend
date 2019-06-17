@@ -8,6 +8,7 @@ const async = require('async')
 const TokenManager = require('../lib/TokenManager')
 const ERROR = HELPER.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
 const CONFIG = require('../config')
+const PG_MODELS = require('../models/pg')
 
 const researcherRegister = (payload, callback) => {
   let accessToken = null
@@ -32,6 +33,16 @@ const researcherRegister = (payload, callback) => {
         userFound = DataFromDB
         cb()
       })
+    },
+    function (cb) {
+      PG_MODELS.ResearcherModel.create({
+        emailId: payload.emailId
+      })
+        .then(() => {
+          cb()
+        }).catch(err => {
+          cb(JSON.stringify(err))
+        })
     },
     function (cb) {
       if (!userFound) return cb(ERROR.IMP_ERROR)
@@ -118,7 +129,7 @@ const researcherLogin = (payload, callback) => {
   ],
     function (err) {
       if (err) return callback(err)
-      
+
       callback(null, {
         ResearcherDetails: HELPER.deleteUnnecessaryUserData(userFound)
       })
