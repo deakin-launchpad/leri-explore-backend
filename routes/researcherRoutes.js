@@ -5,7 +5,7 @@ const Controllers = require("../controllers")
 
 const researcherLogin = {
   method: "POST",
-  path: "/api/researcher/login",
+  path: "/api/user/login",
   config: {
     description: "Researcher Login API",
     tags: ["api", "researcher"],
@@ -41,7 +41,7 @@ const researcherLogin = {
 
 const researcherRegister = {
   method: "POST",
-  path: "/api/researcher/register",
+  path: "/api/user/register",
   config: {
     description: "Researcher Register API",
     tags: ["api", "researcher"],
