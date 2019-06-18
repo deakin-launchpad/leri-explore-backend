@@ -1,9 +1,7 @@
-/**
- * Created by Navit
- */
 'use strict'
 
-var QueryRoutes = require('./queryRoutes');
-var ResearcherRoutes = require('./researcherRoutes');
-var APIs = [].concat(QueryRoutes, ResearcherRoutes);
-module.exports = APIs;
+const QueryRoutes = require('./queryRoutes')
+const ResearcherRoutes = require('./researcherRoutes')
+const WorkspaceRoutes = require('./workspaceRoutes')
+const APIs = [].concat(QueryRoutes, ResearcherRoutes, WorkspaceRoutes)
+module.exports = APIs
