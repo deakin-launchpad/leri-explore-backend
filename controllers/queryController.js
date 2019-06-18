@@ -7,7 +7,7 @@ const ERROR = require('../config/appConstants').STATUS_MSG.ERROR
 const async = require('async')
 
 module.exports.getAgeActivityRanges = function (params, callback) {
-  MODELS.AgeRangeLookup.findAll({
+  MODELS.AgeActivityRangeLookups.findAll({
     where: {
       age: params.age
     }
@@ -22,7 +22,7 @@ module.exports.getAgeActivityRanges = function (params, callback) {
 module.exports.getQueries = function (userData, callback) {
   const query = `select \
   * from researcher_queries \
-  where "researcherId" = ( \
+  where "researcher_id" = ( \
     select id from researcher_email_lookups r \
     where r."emailId" = '${userData.emailId}' \
   )
@@ -111,7 +111,7 @@ module.exports.getResults = function (userData, payload, callback) {
         })
     },
     function (cb) {
-      MODELS.ResearcherEmailLookup.findOne({
+      MODELS.ResearcherEmailLookups.findOne({
         where: {
           emailId: userData.emailId
         }
@@ -129,7 +129,7 @@ module.exports.getResults = function (userData, payload, callback) {
     function (cb) {
       try {
         MODELS.ResearcherQueries.create({
-          researcherId: requiredResearcher.id,
+          researcher_id: requiredResearcher.id,
           query: {
             ...payload
           }
@@ -156,7 +156,7 @@ module.exports.uploadFile = function (payload, callback) {
   Parser.processFile(payload, (err, data) => {
     if (err) return callback(err)
 
-    MODELS.UserSensor.bulkCreate(data, {
+    MODELS.UserSensors.bulkCreate(data, {
       fields: [
         "timestamp",
         "s1",

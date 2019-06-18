@@ -1,6 +1,6 @@
 module.exports = {
-  ResearcherEmailLookup: require('./PGResearcherModel'),
-  UserSensor: require('./UserSensorModel'),
-  AgeRangeLookup: require('./AgeRangeLookupModel'),
+  ResearcherEmailLookups: require('./PGResearcherModel'),
+  UserSensors: require('./UserSensorModel'),
+  AgeActivityRangeLookups: require('./AgeRangeLookupModel'),
   ResearcherQueries: require('./ResearcherQueriesModel')
 }

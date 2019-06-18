@@ -4,7 +4,7 @@ const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 class AgeActivityRangeLookup extends Sequelize.Model { }
 AgeActivityRangeLookup.init({
   age: Sequelize.INTEGER,
-  activityId: Sequelize.INTEGER,
+  activity_id: Sequelize.INTEGER,
   min: Sequelize.INTEGER,
   max: Sequelize.INTEGER
 }, { sequelize: sequelizeInstance, modelName: 'age_activity_range_lookup', timestamps: true })

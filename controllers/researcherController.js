@@ -35,7 +35,7 @@ const researcherRegister = (payload, callback) => {
       })
     },
     function (cb) {
-      PG_MODELS.ResearcherEmailLookup.create({
+      PG_MODELS.ResearcherEmailLookups.create({
         emailId: payload.emailId
       })
         .then(() => {

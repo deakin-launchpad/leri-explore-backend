@@ -3,7 +3,7 @@ const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 
 class ResearcherQueries extends Sequelize.Model { }
 ResearcherQueries.init({
-  researcherId: {
+  researcher_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
 
