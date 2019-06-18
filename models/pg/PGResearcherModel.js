@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize')
 const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 
-class ResearcherModel extends Sequelize.Model { }
-ResearcherModel.init({
+class ResearcherEmailLookupModel extends Sequelize.Model { }
+ResearcherEmailLookupModel.init({
   emailId: { type: Sequelize.STRING, unique: true, allowNull: false }
-}, { sequelize: sequelizeInstance, modelName: 'researcher', timestamps: true })
+}, { sequelize: sequelizeInstance, modelName: 'researcher_email_lookup', timestamps: true })
 
-ResearcherModel.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
+// ResearcherEmailLookupModel.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
 
-module.exports = ResearcherModel
+module.exports = ResearcherEmailLookupModel

@@ -45,7 +45,8 @@ const getQueries = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.getQueries(function (err, data) {
+        const userData = { emailId: "akash@test.com" } // TODO: Get rid of this when Navit fixes the authentication
+        Controllers.QueryController.getQueries(userData, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -73,7 +74,9 @@ const postQuery = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.getResults(request.payload, function (err, data) {
+        const userData = { emailId: "akash@test.com" } // TODO: Get rid of this when Navit fixes the authentication
+
+        Controllers.QueryController.getResults(userData, request.payload, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)

@@ -1,5 +1,5 @@
 module.exports = {
-  ResearcherModel: require('./PGResearcherModel'),
+  ResearcherEmailLookup: require('./PGResearcherModel'),
   UserSensor: require('./UserSensorModel'),
   AgeRangeLookup: require('./AgeRangeLookupModel'),
   ResearcherQueries: require('./ResearcherQueriesModel')

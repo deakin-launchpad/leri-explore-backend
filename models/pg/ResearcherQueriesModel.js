@@ -9,7 +9,7 @@ ResearcherQueries.init({
 
     references: {
       // This is a reference to another model
-      model: 'researchers',
+      model: 'researcher_email_lookups',
 
       // This is the column name of the referenced model
       key: 'id',

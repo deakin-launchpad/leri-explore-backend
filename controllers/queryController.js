@@ -1,6 +1,10 @@
+'use strict'
+
 const MODELS = require('../models')
-const Parser = require("../lib/parser")
+const Parser = require('../lib/parser')
 const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
+const ERROR = require('../config/appConstants').STATUS_MSG.ERROR
+const async = require('async')
 
 module.exports.getAgeActivityRanges = function (params, callback) {
   MODELS.AgeRangeLookup.findAll({
@@ -15,21 +19,25 @@ module.exports.getAgeActivityRanges = function (params, callback) {
     })
 }
 
-module.exports.getQueries = function (callback) {
-  MODELS.ResearcherQueries.findAll({
-    limit: 100,
-    order: [
-      ['id', 'DESC']
-    ]
-  })
+module.exports.getQueries = function (userData, callback) {
+  const query = `select \
+  * from researcher_queries \
+  where "researcherId" = ( \
+    select id from researcher_email_lookups r \
+    where r."emailId" = '${userData.emailId}' \
+  )
+  order by id DESC
+  limit 100
+  `
+  sequelizeInstance.query(query)
     .then(data => {
-      callback(null, data)
+      callback(null, data[0])
     }).catch(err => {
       callback(JSON.stringify(err))
     })
 }
 
-module.exports.getResults = function (payload, callback) {
+module.exports.getResults = function (userData, payload, callback) {
 
   let projections = [], groupBys = [], prepareCases = []
 
@@ -60,7 +68,7 @@ module.exports.getResults = function (payload, callback) {
     else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
   })
 
-  let query = `select \
+  const query = `select \
 	${projections.join(', ')}, \
 	t.range as ranges, \
 	count(*) as number_of_occurences, \
@@ -88,19 +96,60 @@ module.exports.getResults = function (payload, callback) {
       when foo.c > 200 then 'Above 200'  \
   */
 
-  sequelizeInstance.query(query)
-    // MODELS.UserSensor.findAll({ limit: 100, orer: "DESC" })
-    .then(data => {
-      callback(null, data)
-    }).then(() => {
-      MODELS.ResearcherQueries.create({
-        query: {
-          ...payload
+  let resultData, requiredResearcher = ''
+
+  async.series([
+    function (cb) {
+      sequelizeInstance.query(query)
+        .then(data => {
+          // We use data[0] here since .query() returns some meta about the query as well.
+          resultData = data[0]
+          return cb()
+        })
+        .catch(err => {
+          return cb(JSON.stringify(err))
+        })
+    },
+    function (cb) {
+      MODELS.ResearcherEmailLookup.findOne({
+        where: {
+          emailId: userData.emailId
         }
       })
-    }).catch(err => {
-      callback(JSON.stringify(err))
-    })
+        .then(data => {
+          if (!data || !data.dataValues) return cb('No record found')
+          requiredResearcher = data.dataValues
+
+          return cb()
+        })
+        .catch(err => {
+          return cb(JSON.stringify(err))
+        })
+    },
+    function (cb) {
+      try {
+        MODELS.ResearcherQueries.create({
+          researcherId: requiredResearcher.id,
+          query: {
+            ...payload
+          }
+        })
+          .then(() => {
+            return cb()
+          })
+          .catch(err => {
+            return cb(JSON.stringify(err))
+          })
+      } catch (err) {
+        return cb(ERROR.IMP_ERROR)
+      }
+    }
+  ],
+    function (err) {
+      if (err) return callback(err)
+      callback(null, resultData)
+    }
+  )
 }
 
 module.exports.uploadFile = function (payload, callback) {
@@ -125,6 +174,5 @@ module.exports.uploadFile = function (payload, callback) {
     }).catch(err => {
       callback(JSON.stringify(err))
     })
-
   })
 }
