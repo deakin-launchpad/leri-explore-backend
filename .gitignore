@@ -41,3 +41,5 @@ dump.rdb
 logfile
 vcap-local.json
 uploads
+
+.vscode/settings.json
