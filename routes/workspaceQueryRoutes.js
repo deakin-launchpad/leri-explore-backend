@@ -21,6 +21,9 @@ const getAllQueries = {
       })
     },
     validate: {
+      params: {
+        id: Joi.number().required()
+      },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
