@@ -39,7 +39,12 @@ const PredefinedParameterizedQueries = {
   shinchan: function (request, callback) {
     let projections = [], groupBys = [], prepareCases = []
 
-    payload.groups.forEach(group => {
+    if (!request.payload.query.data) return callback("query.data is required")
+
+    let qData = request.payload.query.data
+    if (!qData.groups || !qData.cases || !qData.sensor) return callback("Please send all required data for this PARAMETERIZED query")
+
+    request.payload.query.data.groups.forEach(group => {
       switch (group) {
         case "year":
           projections.push("date_part('year', t.tstp) as year")
@@ -60,7 +65,7 @@ const PredefinedParameterizedQueries = {
       }
     })
 
-    request.payload.cases.forEach(item => {
+    request.payload.query.data.cases.forEach(item => {
       if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
       else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
       else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
@@ -79,7 +84,7 @@ const PredefinedParameterizedQueries = {
           from ( \
               select c, tstp \
               from ( \
-                  select s${request.payload.sensor} as c, timestamp as tstp from user_sensors \
+                  select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
               ) as agg \
           ) as foo \
       ) as t \
@@ -111,6 +116,7 @@ const PredefinedParameterizedQueries = {
       function (cb) {
         try {
           MODELS.WorkspaceQueries.create({
+            workspace_id: request.params.id,
             ...request.payload
           })
             .then(() => {
@@ -139,7 +145,9 @@ module.exports.post = async function (request, callback) {
     return PredefinedParameterizedQueries[request.payload.name](request, callback)
   }
 
-  if (!request.payload.query || !request.payload.query.string) return callback("query.string is required")
+  if (!request.payload.query.string) return callback("query.string is required")
+
+  let resultData
 
   async.series([
     function (cb) {
