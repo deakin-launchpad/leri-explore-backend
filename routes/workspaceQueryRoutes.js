@@ -36,18 +36,16 @@ const getAgeActivityRanges = {
   }
 }
 
-const getQueries = {
+const getAllQueries = {
   method: "GET",
-  path: "/api/queries",
+  path: "/api/ws/{id}/queries",
   config: {
     description: "Get queries",
     auth: 'UserAuth',
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        let userData = request.auth && request.auth.credentials && request.auth.credentials.userData || null
-
-        Controllers.QueryController.getQueries(userData, function (err, data) {
+        Controllers.QueryController.getQueries(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -70,16 +68,14 @@ const getQueries = {
 
 const postQuery = {
   method: "POST",
-  path: "/api/query",
+  path: "/api/ws/{id}/query",
   config: {
     description: "Query API step 2",
     auth: 'UserAuth',
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        let userData = request.auth && request.auth.credentials && request.auth.credentials.userData || null
-
-        Controllers.QueryController.getResults(userData, request.payload, function (err, data) {
+        Controllers.QueryController.postQuery(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -90,14 +86,9 @@ const postQuery = {
     validate: {
       payload: {
         workspace_id: Joi.number().required(),
-        groups: Joi.array().items(Joi.string()),
-        cases: Joi.array().items(Joi.object().keys(
-          {
-            min: Joi.number(),
-            max: Joi.number()
-          }
-        )),
-        sensor: Joi.number().required()
+        q_type: Joi.string().required(),
+        name: Joi.string().required(),
+        query: Joi.object().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
@@ -158,7 +149,7 @@ const uploadFile = {
 
 module.exports = [
   getAgeActivityRanges,
-  getQueries,
+  getAllQueries,
   postQuery,
   uploadFile
 ]

@@ -15,7 +15,9 @@ WorkspaceQueries.init({
       key: 'id',
     }
   },
-  query: { type: 'JSONB' }
+  q_type: { type: Sequelize.STRING, required: true, allowNull: false },
+  name: { type: Sequelize.STRING, required: true, allowNull: false },
+  query: { type: 'JSONB', required: true, allowNull: false }
 }, { sequelize: sequelizeInstance, modelName: 'workspace_query', timestamps: true })
 
 module.exports = WorkspaceQueries

@@ -19,88 +19,129 @@ module.exports.getAgeActivityRanges = function (params, callback) {
     })
 }
 
-module.exports.getQueries = function (userData, callback) {
-  const query = `select \
-  * from researcher_queries \
-  where "researcher_id" = ( \
-    select id from researcher_email_lookups r \
-    where r."emailId" = '${userData.emailId}' \
-  )
-  order by id DESC
-  limit 100
-  `
-  sequelizeInstance.query(query)
+module.exports.getQueries = function (request, callback) {
+  MODELS.WorkspaceQueries.findAll({
+    where: {
+      workspace_id: request.params.id
+    },
+    limit: 100
+  })
     .then(data => {
-      callback(null, data[0])
+      callback(null, data)
     }).catch(err => {
       callback(JSON.stringify(err))
     })
 }
 
-module.exports.getResults = async function (userData, payload, callback) {
+const PredefinedParameterizedQueries = {
+  shinchan: function (request, callback) {
+    let projections = [], groupBys = [], prepareCases = []
 
-  let projections = [], groupBys = [], prepareCases = []
+    payload.groups.forEach(group => {
+      switch (group) {
+        case "year":
+          projections.push("date_part('year', t.tstp) as year")
+          groupBys.push("year")
+          break
+        case "month":
+          projections.push("date_part('month', t.tstp) as month")
+          groupBys.push("month")
+          break
+        case "day":
+          projections.push("date_part('day', t.tstp) as day")
+          groupBys.push("day")
+          break
+        case "hour":
+          projections.push("date_part('hour', t.tstp) as hour")
+          groupBys.push("hour")
+          break
+      }
+    })
 
-  payload.groups.forEach(group => {
-    switch (group) {
-      case "year":
-        projections.push("date_part('year', t.tstp) as year")
-        groupBys.push("year")
-        break
-      case "month":
-        projections.push("date_part('month', t.tstp) as month")
-        groupBys.push("month")
-        break
-      case "day":
-        projections.push("date_part('day', t.tstp) as day")
-        groupBys.push("day")
-        break
-      case "hour":
-        projections.push("date_part('hour', t.tstp) as hour")
-        groupBys.push("hour")
-        break
-    }
-  })
+    request.payload.cases.forEach(item => {
+      if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
+      else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
+      else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
+    })
 
-  payload.cases.forEach(item => {
-    if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
-    else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
-    else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
-  })
-
-  const query = `select \
-	${projections.join(', ')}, \
-	t.range as ranges, \
-	count(*) as number_of_occurences, \
-	count(*)*15 as "total_duration(in seconds)" \
-  from ( \
-      select case \
-      ${prepareCases.join(' ')} \
-      end as range, \
-      foo.tstp as tstp \
+    const query = `select \
+      ${projections.join(', ')}, \
+      t.range as ranges, \
+      count(*) as number_of_occurences, \
+      count(*)*15 as "total_duration(in seconds)" \
       from ( \
-          select c, tstp \
+          select case \
+          ${prepareCases.join(' ')} \
+          end as range, \
+          foo.tstp as tstp \
           from ( \
-              select s${payload.sensor} as c, timestamp as tstp from user_sensors \
-          ) as agg \
-      ) as foo \
-  ) as t \
-  group by \
-    ${groupBys.join(',')}, ranges \
-  order by \
-    ${groupBys.join(',')}, ranges`
+              select c, tstp \
+              from ( \
+                  select s${request.payload.sensor} as c, timestamp as tstp from user_sensors \
+              ) as agg \
+          ) as foo \
+      ) as t \
+      group by \
+        ${groupBys.join(',')}, ranges \
+      order by \
+        ${groupBys.join(',')}, ranges`
 
-  /** Cases example:
-   *  when foo.c between 0 and 100 then '0-100' \
-      when foo.c between 100 and 200 then '100-200' \
-      when foo.c > 200 then 'Above 200'  \
-  */
+    /** Cases example:
+     *  when foo.c between 0 and 100 then '0-100' \
+        when foo.c between 100 and 200 then '100-200' \
+        when foo.c > 200 then 'Above 200'  \
+    */
 
-  let resultData
+    let resultData
+
+    async.series([
+      function (cb) {
+        sequelizeInstance.query(query)
+          .then(data => {
+            // We use data[0] here since .query() returns some meta about the query as well.
+            resultData = data[0]
+            return cb()
+          })
+          .catch(err => {
+            return cb(JSON.stringify(err))
+          })
+      },
+      function (cb) {
+        try {
+          MODELS.WorkspaceQueries.create({
+            ...request.payload
+          })
+            .then(() => {
+              return cb()
+            })
+            .catch(err => {
+              return cb(JSON.stringify(err))
+            })
+        } catch (err) {
+          return cb(ERROR.IMP_ERROR)
+        }
+      }
+    ],
+      function (err) {
+        if (err) return callback(err)
+        callback(null, resultData)
+      }
+    )
+  }
+
+}
+
+module.exports.postQuery = async function (request, callback) {
+  if (request.payload.q_type === "PARAMETERIZED") {
+    if (!PredefinedParameterizedQueries.hasOwnProperty(request.payload.name)) return callback("That paramterized query doesn't exist")
+    return PredefinedParameterizedQueries[request.payload.name](request, callback)
+  }
+
+  if (!request.payload.query || !request.payload.query.string) return callback("query.string is required")
 
   async.series([
     function (cb) {
-      sequelizeInstance.query(query)
+      sequelizeInstance.query(request.payload.query.string)
         .then(data => {
           // We use data[0] here since .query() returns some meta about the query as well.
           resultData = data[0]
@@ -113,10 +154,7 @@ module.exports.getResults = async function (userData, payload, callback) {
     function (cb) {
       try {
         MODELS.WorkspaceQueries.create({
-          workspace_id: payload.workspace_id,
-          query: {
-            ...payload
-          }
+          ...request.payload
         })
           .then(() => {
             return cb()
@@ -134,6 +172,7 @@ module.exports.getResults = async function (userData, payload, callback) {
       callback(null, resultData)
     }
   )
+
 }
 
 module.exports.uploadFile = function (payload, callback) {
