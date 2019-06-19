@@ -96,7 +96,7 @@ module.exports.getResults = async function (userData, payload, callback) {
       when foo.c > 200 then 'Above 200'  \
   */
 
-  let resultData, requiredResearcherWorkspace = ''
+  let resultData
 
   async.series([
     function (cb) {
@@ -111,27 +111,9 @@ module.exports.getResults = async function (userData, payload, callback) {
         })
     },
     function (cb) {
-      const query = `select
-      id from researcher_workspaces
-      where workspace_id = ${payload.workspace_id} and researcher_id = (
-        select id from researcher_email_lookups r
-        where r."emailId" = '${userData.emailId}'
-      )`
-      sequelizeInstance.query(query)
-        .then(data => {
-          if (!data || data.length === 0) return cb('No record found')
-          requiredResearcherWorkspace = data[0][0]
-
-          return cb()
-        })
-        .catch(err => {
-          return cb(JSON.stringify(err))
-        })
-    },
-    function (cb) {
       try {
-        MODELS.ResearcherWorkspaceQueries.create({
-          researcher_workspace_id: requiredResearcherWorkspace.id,
+        MODELS.WorkspaceQueries.create({
+          workspace_id: payload.workspace_id,
           query: {
             ...payload
           }

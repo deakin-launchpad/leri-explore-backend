@@ -3,7 +3,7 @@ const async = require('async')
 const Workspaces = require('./WorkspacesModel')
 const ResearcherEmailLookups = require('./ResearcherEmailLookupsModel')
 const ResearcherWorkspaces = require('./ResearcherWorkspacesModel')
-const ResearcherWorkspaceQueries = require('./ResearcherQueriesModel')
+const WorkspaceQueries = require('./WorkspaceQueriesModel')
 const UserSensors = require('./UserSensorsModel')
 const AgeActivityRangeLookups = require('./AgeActivityRangeLookupsModel')
 
@@ -13,7 +13,7 @@ async function seed() {
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
   await ResearcherWorkspaces.sync({ force: true })
-  await ResearcherWorkspaceQueries.sync({ force: true })
+  await WorkspaceQueries.sync({ force: true })
 
   await ResearcherEmailLookups.create({ emailId: "akash@test.com" })
   await ResearcherEmailLookups.create({ emailId: "sanchit@test.com" })
@@ -85,7 +85,7 @@ module.exports = {
   Workspaces: Workspaces,
   ResearcherEmailLookups: ResearcherEmailLookups,
   ResearcherWorkspaces: ResearcherWorkspaces,
-  ResearcherWorkspaceQueries: ResearcherWorkspaceQueries,
+  WorkspaceQueries: WorkspaceQueries,
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,
 }
