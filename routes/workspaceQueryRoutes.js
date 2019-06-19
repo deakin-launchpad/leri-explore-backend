@@ -131,7 +131,9 @@ const putQuery = {
         id: Joi.number().required()
       },
       payload: {
-        title: Joi.string().required()
+        q_type: Joi.string().required(),
+        name: Joi.string().required(),
+        query: Joi.object().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
