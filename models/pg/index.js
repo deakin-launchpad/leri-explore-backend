@@ -1,94 +1,3 @@
-// const Sequelize = require('sequelize')
-// const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
-
-// class Workspaces extends Sequelize.Model { }
-// Workspaces.init({
-//   title: Sequelize.STRING
-// }, { sequelize: sequelizeInstance, modelName: 'workspace', timestamps: true, paranoid: true })
-
-
-
-// class ResearcherEmailLookups extends Sequelize.Model { }
-// ResearcherEmailLookups.init({
-//   emailId: { type: Sequelize.STRING, unique: true, allowNull: false }
-// }, { sequelize: sequelizeInstance, modelName: 'researcher_email_lookup', timestamps: true })
-
-
-
-// class UserSensors extends Sequelize.Model { }
-// UserSensors.init({
-//   user_id: Sequelize.STRING,
-//   timestamp: { type: 'TIMESTAMP', defaultValue: Sequelize.NOW },
-//   s1: Sequelize.INTEGER,
-//   s2: Sequelize.INTEGER,
-//   s3: Sequelize.INTEGER,
-//   s4: Sequelize.INTEGER,
-//   s5: Sequelize.INTEGER,
-//   s6: Sequelize.INTEGER,
-//   s7: Sequelize.INTEGER,
-//   s8: Sequelize.INTEGER,
-//   s9: Sequelize.INTEGER,
-// }, { sequelize: sequelizeInstance, modelName: 'user_sensor', timestamps: true })
-
-
-// class AgeActivityRangeLookups extends Sequelize.Model { }
-// AgeActivityRangeLookups.init({
-//   age: Sequelize.INTEGER,
-//   activity_id: Sequelize.INTEGER,
-//   min: Sequelize.INTEGER,
-//   max: Sequelize.INTEGER
-// }, { sequelize: sequelizeInstance, modelName: 'age_activity_range_lookup', timestamps: true })
-// // TODO: Add unique constraint to all 4 columns together
-
-
-// class ResearcherWorkspaces extends Sequelize.Model { }
-// ResearcherWorkspaces.init({
-//   workspace_id: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-
-//     references: {
-//       // This is a reference to another model
-//       model: 'workspaces',
-
-//       // This is the column name of the referenced model
-//       key: 'id'
-//     }
-//   },
-//   researcher_id: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-
-//     references: {
-//       // This is a reference to another model
-//       model: 'researcher_email_lookups',
-
-//       // This is the column name of the referenced model
-//       key: 'id'
-//     }
-//   }
-// }, { sequelize: sequelizeInstance, modelName: 'researcher_workspace', timestamps: true })
-
-
-
-
-// class ResearcherWorkspaceQueries extends Sequelize.Model { }
-// ResearcherWorkspaceQueries.init({
-//   researcher_workspace_id: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-
-//     references: {
-//       // This is a reference to another model
-//       model: 'researcher_workspaces',
-
-//       // This is the column name of the referenced model
-//       key: 'id',
-//     }
-//   },
-//   query: { type: 'JSONB' }
-// }, { sequelize: sequelizeInstance, modelName: 'researcher_workspace_query', timestamps: true })
-
 const Workspaces = require('./WorkspacesModel')
 const ResearcherEmailLookups = require('./ResearcherEmailLookupsModel')
 const ResearcherWorkspaces = require('./ResearcherWorkspacesModel')
@@ -110,9 +19,6 @@ Workspaces.sync({ force: true })
     })
   })
 })
-
-
-
 
 
 UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
