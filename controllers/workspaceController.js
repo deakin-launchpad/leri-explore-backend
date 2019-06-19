@@ -2,9 +2,9 @@
 
 const MODELS = require('../models')
 
-module.exports.createWorkspace = function (payload, callback) {
+module.exports.createWorkspace = function (request, callback) {
   MODELS.Workspaces.create({
-    ...payload
+    ...request.payload
   })
     .then(data => {
       callback(null, data)
@@ -14,7 +14,7 @@ module.exports.createWorkspace = function (payload, callback) {
 }
 
 
-module.exports.getAllWorkspaces = function (callback) {
+module.exports.getAllWorkspaces = function (request, callback) {
   MODELS.Workspaces.findAll({
     limit: 100
   })
@@ -26,10 +26,10 @@ module.exports.getAllWorkspaces = function (callback) {
 }
 
 
-module.exports.getWorkspace = function (params, callback) {
+module.exports.getWorkspace = function (request, callback) {
   MODELS.Workspaces.findOne({
     where: {
-      id: params.id
+      id: request.params.id
     }
   })
     .then(data => {
@@ -40,12 +40,12 @@ module.exports.getWorkspace = function (params, callback) {
 }
 
 
-module.exports.putWorkspace = function (params, payload, callback) {
+module.exports.putWorkspace = function (request, callback) {
   MODELS.Workspaces.update({
-    ...payload
+    ...request.payload
   }, {
     where: {
-      id: params.id
+      id: request.params.id
     }
   })
     .then(data => {
@@ -56,10 +56,10 @@ module.exports.putWorkspace = function (params, payload, callback) {
 }
 
 
-module.exports.deleteWorkspace = function (params, callback) {
+module.exports.deleteWorkspace = function (request, callback) {
   MODELS.Workspaces.destroy({
     where: {
-      id: params.id
+      id: request.params.id
     }
   })
     .then(data => {

@@ -11,7 +11,7 @@ const createWorkspace = {
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceController.createWorkspace(request.payload, function (err, data) {
+        WorkspaceController.createWorkspace(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -42,7 +42,7 @@ const getAllWorkspaces = {
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceController.getAllWorkspaces(function (err, data) {
+        WorkspaceController.getAllWorkspaces(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -70,7 +70,7 @@ const getWorkspace = {
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceController.getWorkspace(request.params, function (err, data) {
+        WorkspaceController.getWorkspace(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -101,7 +101,7 @@ const putWorkspace = {
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceController.putWorkspace(request.params, request.payload, function (err, data) {
+        WorkspaceController.putWorkspace(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -135,7 +135,7 @@ const deleteWorkspace = {
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceController.deleteWorkspace(request.params, function (err, data) {
+        WorkspaceController.deleteWorkspace(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
