@@ -75,12 +75,11 @@ module.exports = class MongoDBGenericService {
   // Get multiple records from DB
   getRecordPromise(criteria, projection, options) {
     options.lean = true;
-    return new Promise((reject, resolve) => {
-      MONGO_MODELS[this.name].find(criteria, projection, options, function(err,data){
-        if(err) reject(err)
+    return new Promise((resolve, reject) => {
+      MONGO_MODELS[this.name].find(criteria, projection, options, function (err, data) {
+        if (err) reject(err)
         else resolve(data)
       });
-
     });
   }
 };

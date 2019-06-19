@@ -68,10 +68,11 @@ const postQuery = {
   path: "/api/query",
   config: {
     description: "Query API step 2",
+    auth: 'UserAuth',
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        const userData = { emailId: "akash@test.com" } // TODO: Get rid of this when Navit fixes the authentication
+        let userData = request.auth && request.auth.credentials && request.auth.credentials.userData || null
 
         Controllers.QueryController.getResults(userData, request.payload, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
@@ -93,6 +94,7 @@ const postQuery = {
         )),
         sensor: Joi.number().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {

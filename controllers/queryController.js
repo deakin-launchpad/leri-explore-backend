@@ -121,7 +121,6 @@ module.exports.getResults = async function (userData, payload, callback) {
         .then(data => {
           if (!data || data.length === 0) return cb('No record found')
           requiredResearcherWorkspace = data[0][0]
-          console.log(requiredResearcherWorkspace)
 
           return cb()
         })
