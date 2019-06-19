@@ -7,7 +7,7 @@ const getAllQueries = {
   method: "GET",
   path: "/api/ws/{id}/queries",
   config: {
-    description: "Get queries",
+    description: "Get all queries of a workspace",
     auth: 'UserAuth',
     tags: ["api", "ws", "query"],
     handler: function (request, h) {
@@ -37,7 +37,7 @@ const getQuery = {
   method: "GET",
   path: "/api/ws/{workspace_id}/queries/{id}",
   config: {
-    description: "Update a query in a workspace",
+    description: "Get a query of a workspace",
     auth: 'UserAuth',
     tags: ["api", "ws", "query"],
     handler: function (request, h) {
