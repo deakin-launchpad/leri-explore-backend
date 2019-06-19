@@ -8,6 +8,7 @@ const getAgeActivityRanges = {
   path: "/api/age_activity_ranges/{age}",
   config: {
     description: "Query API step 1",
+    auth: 'UserAuth',
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -23,6 +24,7 @@ const getAgeActivityRanges = {
       params: {
         age: Joi.number().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
@@ -114,6 +116,7 @@ const uploadFile = {
   path: "/api/upload",
   config: {
     description: "Upload file(s) API",
+    auth: 'UserAuth',
     tags: ["api", "upload"],
     payload: {
       maxBytes: 20715200,
@@ -140,6 +143,7 @@ const uploadFile = {
           .required()
           .description('Data file(s)')
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
