@@ -45,7 +45,7 @@ const getAllQueries = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.getQueries(request, function (err, data) {
+        Controllers.WorkspaceQueryController.getAllQueries(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -66,11 +66,45 @@ const getAllQueries = {
   }
 }
 
+const getQuery = {
+  method: "GET",
+  path: "/api/ws/{workspace_id}/queries/{id}",
+  config: {
+    description: "Update a query in a workspace",
+    auth: 'UserAuth',
+    tags: ["api", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        Controllers.WorkspaceQueryController.getQuery(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      params: {
+        workspace_id: Joi.number().required(),
+        id: Joi.number().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
 const postQuery = {
   method: "POST",
-  path: "/api/ws/{id}/query",
+  path: "/api/ws/{id}/queries",
   config: {
-    description: "Query API step 2",
+    description: "Post a query to a workspace",
     auth: 'UserAuth',
     tags: ["api", "query"],
     handler: function (request, h) {
@@ -89,6 +123,77 @@ const postQuery = {
         q_type: Joi.string().required(),
         name: Joi.string().required(),
         query: Joi.object().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
+const putQuery = {
+  method: "PUT",
+  path: "/api/ws/{workspace_id}/queries/{id}",
+  config: {
+    description: "Update a query in a workspace",
+    auth: 'UserAuth',
+    tags: ["api", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        Controllers.WorkspaceQueryController.putQuery(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      params: {
+        workspace_id: Joi.number().required(),
+        id: Joi.number().required()
+      },
+      payload: {
+        title: Joi.string().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
+const deleteQuery = {
+  method: "DELETE",
+  path: "/api/ws/{workspace_id}/queries/{id}",
+  config: {
+    description: "Update a query in a workspace",
+    auth: 'UserAuth',
+    tags: ["api", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        Controllers.WorkspaceQueryController.deleteQuery(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      params: {
+        workspace_id: Joi.number().required(),
+        id: Joi.number().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
@@ -150,6 +255,9 @@ const uploadFile = {
 module.exports = [
   getAgeActivityRanges,
   getAllQueries,
+  getQuery,
   postQuery,
+  putQuery,
+  deleteQuery,
   uploadFile
 ]

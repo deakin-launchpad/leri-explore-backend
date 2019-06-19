@@ -19,13 +19,28 @@ module.exports.getAgeActivityRanges = function (params, callback) {
     })
 }
 
-module.exports.getQueries = function (request, callback) {
+module.exports.getAllQueries = function (request, callback) {
   MODELS.WorkspaceQueries.findAll({
     where: {
       workspace_id: request.params.id
     },
     limit: 100
   })
+    .then(data => {
+      callback(null, data)
+    }).catch(err => {
+      callback(JSON.stringify(err))
+    })
+}
+
+module.exports.getQuery = function (request, callback) {
+  MODELS.WorkspaceQueries.update({
+    ...request.payload
+  }, {
+      where: {
+        id: request.params.id
+      }
+    })
     .then(data => {
       callback(null, data)
     }).catch(err => {
@@ -173,6 +188,34 @@ module.exports.postQuery = async function (request, callback) {
     }
   )
 
+}
+
+module.exports.putQuery = function (request, callback) {
+  MODELS.WorkspaceQueries.update({
+    ...request.payload
+  }, {
+      where: {
+        id: request.params.id
+      }
+    })
+    .then(data => {
+      callback(null, data)
+    }).catch(err => {
+      callback(JSON.stringify(err))
+    })
+}
+
+module.exports.deleteQuery = function (request, callback) {
+  MODELS.WorkspaceQueries.destroy({
+    where: {
+      id: request.params.id
+    }
+  })
+    .then(data => {
+      callback(null, data)
+    }).catch(err => {
+      callback(JSON.stringify(err))
+    })
 }
 
 module.exports.uploadFile = function (payload, callback) {
