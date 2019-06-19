@@ -43,3 +43,5 @@ vcap-local.json
 uploads
 
 .vscode/settings.json
+
+test.js

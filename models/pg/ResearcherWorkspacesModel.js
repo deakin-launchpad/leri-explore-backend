@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize')
 const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 
-class ResearcherWorkspace extends Sequelize.Model { }
-ResearcherWorkspace.init({
+class ResearcherWorkspaces extends Sequelize.Model { }
+ResearcherWorkspaces.init({
   workspace_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -29,6 +29,4 @@ ResearcherWorkspace.init({
   }
 }, { sequelize: sequelizeInstance, modelName: 'researcher_workspace', timestamps: true })
 
-ResearcherWorkspace.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
-
-module.exports = ResearcherWorkspace
+module.exports = ResearcherWorkspaces
