@@ -1,3 +1,5 @@
+const async = require('async')
+
 const Workspaces = require('./WorkspacesModel')
 const ResearcherEmailLookups = require('./ResearcherEmailLookupsModel')
 const ResearcherWorkspaces = require('./ResearcherWorkspacesModel')
@@ -6,19 +8,30 @@ const UserSensors = require('./UserSensorsModel')
 const AgeActivityRangeLookups = require('./AgeActivityRangeLookupsModel')
 
 
-Workspaces.sync({ force: true })
-.then(() => {
-  ResearcherEmailLookups.sync({ force: true })
-  .then(() => {
-    ResearcherWorkspaces.sync({ force: true })
-    .then(() => {
-      ResearcherWorkspaceQueries.sync({ force: true })
-      .then(() => {
-      
-      })
-    })
-  })
-})
+async function seed() {
+
+  await Workspaces.sync({ force: true })
+  await ResearcherEmailLookups.sync({ force: true })
+  await ResearcherWorkspaces.sync({ force: true })
+  await ResearcherWorkspaceQueries.sync({ force: true })
+
+  await ResearcherEmailLookups.create({ emailId: "akash@test.com" })
+  await ResearcherEmailLookups.create({ emailId: "sanchit@test.com" })
+  
+  await Workspaces.create({ title: "Workspace 1 for user 1" })
+  await Workspaces.create({ title: "Workspace 2 for user 1" })
+
+  await Workspaces.create({ title: "Workspace 1 for user 2" })
+
+
+  await ResearcherWorkspaces.create({ workspace_id: 1, researcher_id: 1 })
+  await ResearcherWorkspaces.create({ workspace_id: 2, researcher_id: 1 })
+
+  await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
+
+}
+
+seed()
 
 
 UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
