@@ -12,7 +12,7 @@ const getAgeActivityRanges = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.getAgeActivityRanges(request.params, function (err, data) {
+        Controllers.WorkspaceQueryController.getAgeActivityRanges(request.params, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -45,7 +45,7 @@ const getAllQueries = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.getQueries(request, function (err, data) {
+        Controllers.WorkspaceQueryController.getQueries(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -75,7 +75,7 @@ const postQuery = {
     tags: ["api", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.postQuery(request, function (err, data) {
+        Controllers.WorkspaceQueryController.postQuery(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -119,7 +119,7 @@ const uploadFile = {
     handler: function (request, h) {
       const payload = request.payload
       return new Promise((resolve, reject) => {
-        Controllers.QueryController.uploadFile(payload, function (err, data) {
+        Controllers.WorkspaceQueryController.uploadFile(payload, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)

@@ -3,7 +3,7 @@
  */
 "use strict";
 module.exports = {
-  QueryController: require("./queryController"),
+  WorkspaceQueryController: require("./workspaceQueryController"),
   WorkspaceController: require('./workspaceController'),
   ResearcherController: require('./researcherController')
 }
