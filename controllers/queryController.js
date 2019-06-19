@@ -37,7 +37,7 @@ module.exports.getQueries = function (userData, callback) {
     })
 }
 
-module.exports.getResults = function (userData, payload, callback) {
+module.exports.getResults = async function (userData, payload, callback) {
 
   let projections = [], groupBys = [], prepareCases = []
 
@@ -117,10 +117,11 @@ module.exports.getResults = function (userData, payload, callback) {
         select id from researcher_email_lookups r
         where r."emailId" = '${userData.emailId}'
       )`
-      MODELS.ResearcherWorkspaces.query(query)
+      sequelizeInstance.query(query)
         .then(data => {
           if (!data || data.length === 0) return cb('No record found')
-          requiredResearcherWorkspace = data[0]
+          requiredResearcherWorkspace = data[0][0]
+          console.log(requiredResearcherWorkspace)
 
           return cb()
         })
