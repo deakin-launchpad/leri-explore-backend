@@ -69,9 +69,9 @@ AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon..
 
 
 module.exports = {
-  Workspace: Workspaces,
+  Workspaces: Workspaces,
   ResearcherEmailLookups: ResearcherEmailLookups,
-  ResearcherWorkspace: ResearcherWorkspaces,
+  ResearcherWorkspaces: ResearcherWorkspaces,
   ResearcherWorkspaceQueries: ResearcherWorkspaceQueries,
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,

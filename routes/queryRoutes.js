@@ -1,6 +1,3 @@
-/**
- * Created by Navit on 15/11/16.
- */
 const HELPER = require("../utils/helper")
 const Joi = require("joi")
 const Config = require("../config")
@@ -86,6 +83,7 @@ const postQuery = {
     },
     validate: {
       payload: {
+        workspace_id: Joi.number().required(),
         groups: Joi.array().items(Joi.string()),
         cases: Joi.array().items(Joi.object().keys(
           {
@@ -110,7 +108,7 @@ const uploadFile = {
   method: "POST",
   path: "/api/upload",
   config: {
-    description: "Upload file API",
+    description: "Upload file(s) API",
     tags: ["api", "upload"],
     payload: {
       maxBytes: 20715200,
@@ -135,7 +133,7 @@ const uploadFile = {
         file: Joi.any()
           .meta({ swaggerType: 'file' })
           .required()
-          .description('Data file')
+          .description('Data file(s)')
       },
       failAction: HELPER.failActionFunction
     },

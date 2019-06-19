@@ -3,7 +3,7 @@
 const MODELS = require('../models')
 
 module.exports.createWorkspace = function (payload, callback) {
-  MODELS.Workspace.create({
+  MODELS.Workspaces.create({
     ...payload
   })
     .then(data => {
@@ -15,7 +15,7 @@ module.exports.createWorkspace = function (payload, callback) {
 
 
 module.exports.getAllWorkspaces = function (callback) {
-  MODELS.Workspace.findAll({
+  MODELS.Workspaces.findAll({
     limit: 100
   })
     .then(data => {
@@ -27,7 +27,7 @@ module.exports.getAllWorkspaces = function (callback) {
 
 
 module.exports.getWorkspace = function (params, callback) {
-  MODELS.Workspace.findOne({
+  MODELS.Workspaces.findOne({
     where: {
       id: params.id
     }
@@ -41,7 +41,7 @@ module.exports.getWorkspace = function (params, callback) {
 
 
 module.exports.putWorkspace = function (params, payload, callback) {
-  MODELS.Workspace.update({
+  MODELS.Workspaces.update({
     ...payload
   }, {
     where: {
@@ -57,7 +57,7 @@ module.exports.putWorkspace = function (params, payload, callback) {
 
 
 module.exports.deleteWorkspace = function (params, callback) {
-  MODELS.Workspace.destroy({
+  MODELS.Workspaces.destroy({
     where: {
       id: params.id
     }

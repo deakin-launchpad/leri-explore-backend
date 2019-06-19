@@ -96,7 +96,7 @@ module.exports.getResults = function (userData, payload, callback) {
       when foo.c > 200 then 'Above 200'  \
   */
 
-  let resultData, requiredResearcher = ''
+  let resultData, requiredResearcherWorkspace = ''
 
   async.series([
     function (cb) {
@@ -111,14 +111,16 @@ module.exports.getResults = function (userData, payload, callback) {
         })
     },
     function (cb) {
-      MODELS.ResearcherEmailLookups.findOne({
-        where: {
-          emailId: userData.emailId
-        }
-      })
+      const query = `select
+      id from researcher_workspaces
+      where workspace_id = ${payload.workspace_id} and researcher_id = (
+        select id from researcher_email_lookups r
+        where r."emailId" = '${userData.emailId}'
+      )`
+      MODELS.ResearcherWorkspaces.query(query)
         .then(data => {
-          if (!data || !data.dataValues) return cb('No record found')
-          requiredResearcher = data.dataValues
+          if (!data || data.length === 0) return cb('No record found')
+          requiredResearcherWorkspace = data[0]
 
           return cb()
         })
@@ -128,8 +130,8 @@ module.exports.getResults = function (userData, payload, callback) {
     },
     function (cb) {
       try {
-        MODELS.ResearcherQueries.create({
-          researcher_id: requiredResearcher.id,
+        MODELS.ResearcherWorkspaceQueries.create({
+          researcher_workspace_id: requiredResearcherWorkspace.id,
           query: {
             ...payload
           }
