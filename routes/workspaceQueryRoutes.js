@@ -1,40 +1,7 @@
 const HELPER = require("../utils/helper")
 const Joi = require("joi")
 const Config = require("../config")
-const Controllers = require("../controllers")
-
-const getAgeActivityRanges = {
-  method: "GET",
-  path: "/api/age_activity_ranges/{age}",
-  config: {
-    description: "Query API step 1",
-    auth: 'UserAuth',
-    tags: ["api", "query"],
-    handler: function (request, h) {
-      return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.getAgeActivityRanges(request.params, function (err, data) {
-          if (err) return reject(HELPER.sendError(err))
-          resolve(
-            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
-          )
-        })
-      })
-    },
-    validate: {
-      params: {
-        age: Joi.number().required()
-      },
-      headers: HELPER.authorizationHeaderObj,
-      failAction: HELPER.failActionFunction
-    },
-    plugins: {
-      "hapi-swagger": {
-        responseMessages:
-          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
-      }
-    }
-  }
-}
+const WorkspaceQueryController = require("../controllers").WorkspaceQueryController
 
 const getAllQueries = {
   method: "GET",
@@ -42,10 +9,10 @@ const getAllQueries = {
   config: {
     description: "Get queries",
     auth: 'UserAuth',
-    tags: ["api", "query"],
+    tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.getAllQueries(request, function (err, data) {
+        WorkspaceQueryController.getAll(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -72,10 +39,10 @@ const getQuery = {
   config: {
     description: "Update a query in a workspace",
     auth: 'UserAuth',
-    tags: ["api", "query"],
+    tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.getQuery(request, function (err, data) {
+        WorkspaceQueryController.get(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -106,10 +73,10 @@ const postQuery = {
   config: {
     description: "Post a query to a workspace",
     auth: 'UserAuth',
-    tags: ["api", "query"],
+    tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.postQuery(request, function (err, data) {
+        WorkspaceQueryController.post(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -119,10 +86,12 @@ const postQuery = {
     },
     validate: {
       payload: {
-        workspace_id: Joi.number().required(),
         q_type: Joi.string().required(),
         name: Joi.string().required(),
         query: Joi.object().required()
+      },
+      params: {
+        id: Joi.number().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
@@ -142,10 +111,10 @@ const putQuery = {
   config: {
     description: "Update a query in a workspace",
     auth: 'UserAuth',
-    tags: ["api", "query"],
+    tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.putQuery(request, function (err, data) {
+        WorkspaceQueryController.put(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -179,10 +148,10 @@ const deleteQuery = {
   config: {
     description: "Update a query in a workspace",
     auth: 'UserAuth',
-    tags: ["api", "query"],
+    tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.deleteQuery(request, function (err, data) {
+        WorkspaceQueryController.delete(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -224,7 +193,7 @@ const uploadFile = {
     handler: function (request, h) {
       const payload = request.payload
       return new Promise((resolve, reject) => {
-        Controllers.WorkspaceQueryController.uploadFile(payload, function (err, data) {
+        WorkspaceQueryController.uploadFile(payload, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -253,7 +222,6 @@ const uploadFile = {
 
 
 module.exports = [
-  getAgeActivityRanges,
   getAllQueries,
   getQuery,
   postQuery,

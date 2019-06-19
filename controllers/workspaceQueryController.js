@@ -6,20 +6,7 @@ const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 const ERROR = require('../config/appConstants').STATUS_MSG.ERROR
 const async = require('async')
 
-module.exports.getAgeActivityRanges = function (params, callback) {
-  MODELS.AgeActivityRangeLookups.findAll({
-    where: {
-      age: params.age
-    }
-  })
-    .then(data => {
-      callback(null, data)
-    }).catch(err => {
-      callback(JSON.stringify(err))
-    })
-}
-
-module.exports.getAllQueries = function (request, callback) {
+module.exports.getAll = function (request, callback) {
   MODELS.WorkspaceQueries.findAll({
     where: {
       workspace_id: request.params.id
@@ -33,7 +20,7 @@ module.exports.getAllQueries = function (request, callback) {
     })
 }
 
-module.exports.getQuery = function (request, callback) {
+module.exports.get = function (request, callback) {
   MODELS.WorkspaceQueries.update({
     ...request.payload
   }, {
@@ -146,7 +133,7 @@ const PredefinedParameterizedQueries = {
 
 }
 
-module.exports.postQuery = async function (request, callback) {
+module.exports.post = async function (request, callback) {
   if (request.payload.q_type === "PARAMETERIZED") {
     if (!PredefinedParameterizedQueries.hasOwnProperty(request.payload.name)) return callback("That paramterized query doesn't exist")
     return PredefinedParameterizedQueries[request.payload.name](request, callback)
@@ -169,6 +156,7 @@ module.exports.postQuery = async function (request, callback) {
     function (cb) {
       try {
         MODELS.WorkspaceQueries.create({
+          workspace_id: request.params.id,
           ...request.payload
         })
           .then(() => {
@@ -190,7 +178,7 @@ module.exports.postQuery = async function (request, callback) {
 
 }
 
-module.exports.putQuery = function (request, callback) {
+module.exports.put = function (request, callback) {
   MODELS.WorkspaceQueries.update({
     ...request.payload
   }, {
@@ -205,7 +193,7 @@ module.exports.putQuery = function (request, callback) {
     })
 }
 
-module.exports.deleteQuery = function (request, callback) {
+module.exports.delete = function (request, callback) {
   MODELS.WorkspaceQueries.destroy({
     where: {
       id: request.params.id
