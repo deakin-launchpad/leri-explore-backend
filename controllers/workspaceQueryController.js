@@ -21,9 +21,7 @@ module.exports.getAll = function (request, callback) {
 }
 
 module.exports.get = function (request, callback) {
-  MODELS.WorkspaceQueries.update({
-    ...request.payload
-  }, {
+  MODELS.WorkspaceQueries.findOne({
       where: {
         id: request.params.id
       }
