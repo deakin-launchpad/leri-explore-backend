@@ -1,37 +1,43 @@
-const debug = require('debug')('app:genricDBService')
-const MONGO_MODELS = require('./models/mongo');
+const debug = require("debug")("app:genricDBService");
+const MONGO_MODELS = require("./models/mongo");
 
 module.exports = class MongoDBGenericService {
   constructor(name) {
-    if (!this.isValidModelName(name)) throw "Invalid model name '" + name + "'. Terminating app..."
+    if (!this.isValidModelName(name))
+      throw "Invalid model name '" + name + "'. Terminating app...";
 
-    this.name = name
-    this.dbObjects = []
+    this.name = name;
+    this.dbObjects = [];
   }
 
   isValidModelName(name) {
-    return !(!name || 0 === name.length || !MONGO_MODELS.hasOwnProperty(name))
+    return !(!name || 0 === name.length || !MONGO_MODELS.hasOwnProperty(name));
   }
 
   // Update a record in DB
   updateRecord(criteria, dataToSet, options, callback) {
     options.lean = true;
     options.new = true;
-    dataToSet.updatedAt = (new Date()).toISOString();
-    MONGO_MODELS[this.name].findOneAndUpdate(criteria, dataToSet, options, callback);
+    dataToSet.updatedAt = new Date().toISOString();
+    MONGO_MODELS[this.name].findOneAndUpdate(
+      criteria,
+      dataToSet,
+      options,
+      callback
+    );
   }
-  //Update all the records 
-  updateAllRecords(criteria,dataToSet,options,callback){
-    options.new = true
-    options.multi = true
-    dataToSet.updatedAt = (new Date()).toISOString();
+  //Update all the records
+  updateAllRecords(criteria, dataToSet, options, callback) {
+    options.new = true;
+    options.multi = true;
+    dataToSet.updatedAt = new Date().toISOString();
     MONGO_MODELS[this.name].update(criteria, dataToSet, options, callback);
   }
 
   rawUpdateRecord(criteria, dataToSet, options, callback) {
     options.lean = true;
     options.new = true;
-    dataToSet.updatedAt = (new Date()).toISOString();
+    dataToSet.updatedAt = new Date().toISOString();
     MONGO_MODELS[this.name].updateOne(criteria, dataToSet, options, callback);
   }
 
@@ -42,16 +48,16 @@ module.exports = class MongoDBGenericService {
 
   insertManyAsync(objects, callback) {
     if (objects.length === 0) {
-      callback(null, this.dbObjects)
-      return this.dbObjects = []
+      callback(null, this.dbObjects);
+      return (this.dbObjects = []);
     }
 
     new MONGO_MODELS[this.name](objects[0]).save((err, data) => {
-      if (err) debug(err)
+      if (err) debug(err);
 
-      this.dbObjects.push(data)
-      objects.splice(0, 1)
-      this.insertManyAsync(objects, callback)
+      this.dbObjects.push(data);
+      objects.splice(0, 1);
+      this.insertManyAsync(objects, callback);
     });
   }
 
@@ -65,4 +71,16 @@ module.exports = class MongoDBGenericService {
     options.lean = true;
     MONGO_MODELS[this.name].find(criteria, projection, options, callback);
   }
-}
+
+  // Get multiple records from DB
+  getRecordPromise(criteria, projection, options) {
+    options.lean = true;
+    return new Promise((reject, resolve) => {
+      MONGO_MODELS[this.name].find(criteria, projection, options, function(err,data){
+        if(err) reject(err)
+        else resolve(data)
+      });
+
+    });
+  }
+};
