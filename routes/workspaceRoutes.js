@@ -8,6 +8,7 @@ const createWorkspace = {
   path: "/api/ws",
   config: {
     description: "Create a new workspace",
+    auth: 'UserAuth',
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -23,6 +24,7 @@ const createWorkspace = {
       payload: {
         title: Joi.string().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
@@ -39,6 +41,7 @@ const getAllWorkspaces = {
   path: "/api/ws",
   config: {
     description: "Get all workspaces",
+    auth: 'UserAuth',
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -51,6 +54,7 @@ const getAllWorkspaces = {
       })
     },
     validate: {
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
@@ -67,6 +71,7 @@ const getWorkspace = {
   path: "/api/ws/{id}",
   config: {
     description: "Get specific workspace",
+    auth: 'UserAuth',
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -82,6 +87,7 @@ const getWorkspace = {
       params: {
         id: Joi.number().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
@@ -98,6 +104,7 @@ const putWorkspace = {
   path: "/api/ws/{id}",
   config: {
     description: "Update specific workspace",
+    auth: 'UserAuth',
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -116,6 +123,7 @@ const putWorkspace = {
       payload: {
         title: Joi.string().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
@@ -132,6 +140,7 @@ const deleteWorkspace = {
   path: "/api/ws/{id}",
   config: {
     description: "Delete specific workspace",
+    auth: 'UserAuth',
     tags: ["api", "ws"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
@@ -147,6 +156,7 @@ const deleteWorkspace = {
       params: {
         id: Joi.number().required()
       },
+      headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
     },
     plugins: {
