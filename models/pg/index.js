@@ -15,8 +15,8 @@ async function seed() {
   await ResearcherWorkspaces.sync({ force: true })
   await WorkspaceQueries.sync({ force: true })
 
-  await ResearcherEmailLookups.create({ emailId: "akash@test.com" })
-  await ResearcherEmailLookups.create({ emailId: "sanchit@test.com" })
+  await ResearcherEmailLookups.create({ email_id: "akash@test.com" })
+  await ResearcherEmailLookups.create({ email_id: "sanchit@test.com" })
   
   await Workspaces.create({ title: "Workspace 1 for user 1" })
   await Workspaces.create({ title: "Workspace 2 for user 1" })
