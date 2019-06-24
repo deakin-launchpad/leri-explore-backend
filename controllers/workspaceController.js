@@ -19,7 +19,8 @@ module.exports.getAllWorkspaces = function (request, callback) {
   let userData = request.auth && request.auth.credentials && request.auth.credentials.userData || null
 
   const query = `select
-      * from researcher_workspaces
+      * from workspaces w INNER JOIN researcher_workspaces r
+      ON w.id = r.workspace_id
       where researcher_id = (
         select id from researcher_email_lookups r
         where r."email_id" = '${userData.emailId}'
