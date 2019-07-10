@@ -22,10 +22,10 @@ module.exports.getAll = function (request, callback) {
 
 module.exports.get = function (request, callback) {
   MODELS.WorkspaceQueries.findOne({
-      where: {
-        id: request.params.id
-      }
-    })
+    where: {
+      id: request.params.id
+    }
+  })
     .then(data => {
       callback(null, data)
     }).catch(err => {
@@ -150,9 +150,7 @@ module.exports.post = async function (request, callback) {
   async.series([
     function (cb) {
       sequelizeInstance.query(request.payload.query.string)
-        .then(data => {
-          // We use data[0] here since .query() returns some meta about the query as well.
-          resultData = data[0]
+        .then(() => {
           return cb()
         })
         .catch(err => {
@@ -181,7 +179,32 @@ module.exports.post = async function (request, callback) {
       callback(null, resultData)
     }
   )
+}
 
+module.exports.runStringQuery = async function (request, callback) {
+
+  if (!request.payload.query.string) return callback("query.string is required")
+
+  let resultData
+
+  async.series([
+    function (cb) {
+      sequelizeInstance.query(request.payload.query.string)
+        .then(data => {
+          // We use data[0] here since .query() returns some meta about the query as well.
+          resultData = data[0]
+          return cb()
+        })
+        .catch(err => {
+          return cb(JSON.stringify(err))
+        })
+    }
+  ],
+    function (err) {
+      if (err) return callback(err)
+      callback(null, resultData)
+    }
+  )
 }
 
 module.exports.put = function (request, callback) {

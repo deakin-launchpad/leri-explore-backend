@@ -81,7 +81,7 @@ const postQuery = {
       return new Promise((resolve, reject) => {
         WorkspaceQueryController.post(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
-          resolve(
+          return resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           )
         })
@@ -95,6 +95,40 @@ const postQuery = {
       },
       params: {
         id: Joi.number().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
+const runQuery = {
+  method: "POST",
+  path: "/api/query/run",
+  config: {
+    description: "Post a query to a to run",
+    auth: 'UserAuth',
+    tags: ["api", "run", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        WorkspaceQueryController.runStringQuery(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          return resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      payload: {
+        q_type: Joi.string().required(),
+        query: Joi.object().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
@@ -232,5 +266,6 @@ module.exports = [
   postQuery,
   putQuery,
   deleteQuery,
-  uploadFile
+  uploadFile,
+  runQuery
 ]
