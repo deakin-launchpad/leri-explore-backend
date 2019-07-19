@@ -212,12 +212,13 @@ module.exports.delete = function (request, callback) {
     })
 }
 
-module.exports.uploadFile = function (payload, callback) {
-  Parser.processFile(payload, (err, data) => {
+module.exports.uploadFile = function (request, callback) {
+  Parser.processFile(request, (err, data) => {
     if (err) return callback(err)
 
     MODELS.UserSensors.bulkCreate(data, {
       fields: [
+        "workspace_id",
         "timestamp",
         "s1",
         "s2",

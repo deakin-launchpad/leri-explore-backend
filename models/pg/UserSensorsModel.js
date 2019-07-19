@@ -3,6 +3,18 @@ const sequelizeInstance = require('../../utils/dbHelper').getPGConnection()
 
 class UserSensors extends Sequelize.Model { }
 UserSensors.init({
+  workspace_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+
+    references: {
+      // This is a reference to another model
+      model: 'workspaces',
+
+      // This is the column name of the referenced model
+      key: 'id'
+    }
+  },
   user_id: Sequelize.STRING,
   timestamp: { type: 'TIMESTAMP', defaultValue: Sequelize.NOW },
   s1: Sequelize.INTEGER,

@@ -29,14 +29,10 @@ async function seed() {
 
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
 
-}
-
-seed()
-
-
-UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
+  UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
   .then(() => UserSensors.create({
     user_id: '12345',
+    workspace_id: 1,
     s1: 0,
     s2: 0,
     s3: 0,
@@ -47,6 +43,10 @@ UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops 
     s8: 0,
     s9: 0
   }))
+
+}
+
+seed()
 
 
 AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table

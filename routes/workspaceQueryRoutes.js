@@ -181,9 +181,11 @@ const deleteQuery = {
   }
 }
 
+
+// TODO: Move this and it's controller to their correct file(s).
 const uploadFile = {
   method: "POST",
-  path: "/api/upload",
+  path: "/api/ws/{id}/upload",
   config: {
     description: "Upload file(s) API",
     auth: 'UserAuth',
@@ -196,9 +198,8 @@ const uploadFile = {
     },
 
     handler: function (request, h) {
-      const payload = request.payload
       return new Promise((resolve, reject) => {
-        WorkspaceQueryController.uploadFile(payload, function (err, data) {
+        WorkspaceQueryController.uploadFile(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
@@ -212,6 +213,9 @@ const uploadFile = {
           .meta({ swaggerType: 'file' })
           .required()
           .description('Data file(s)')
+      },
+      params: {
+        id: Joi.number().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
