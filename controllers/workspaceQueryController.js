@@ -22,10 +22,10 @@ module.exports.getAll = function (request, callback) {
 
 module.exports.get = function (request, callback) {
   MODELS.WorkspaceQueries.findOne({
-      where: {
-        id: request.params.id
-      }
-    })
+    where: {
+      id: request.params.id
+    }
+  })
     .then(data => {
       callback(null, data)
     }).catch(err => {
@@ -110,22 +110,6 @@ const PredefinedParameterizedQueries = {
           .catch(err => {
             return cb(JSON.stringify(err))
           })
-      },
-      function (cb) {
-        try {
-          MODELS.WorkspaceQueries.create({
-            workspace_id: request.params.id,
-            ...request.payload
-          })
-            .then(() => {
-              return cb()
-            })
-            .catch(err => {
-              return cb(JSON.stringify(err))
-            })
-        } catch (err) {
-          return cb(ERROR.IMP_ERROR)
-        }
       }
     ],
       function (err) {
@@ -137,7 +121,7 @@ const PredefinedParameterizedQueries = {
 
 }
 
-module.exports.post = async function (request, callback) {
+module.exports.postRun = async function (request, callback) {
   if (request.payload.q_type === "PARAMETERIZED") {
     if (!PredefinedParameterizedQueries.hasOwnProperty(request.payload.name)) return callback("That paramterized query doesn't exist")
     return PredefinedParameterizedQueries[request.payload.name](request, callback)
@@ -158,22 +142,6 @@ module.exports.post = async function (request, callback) {
         .catch(err => {
           return cb(JSON.stringify(err))
         })
-    },
-    function (cb) {
-      try {
-        MODELS.WorkspaceQueries.create({
-          workspace_id: request.params.id,
-          ...request.payload
-        })
-          .then(() => {
-            return cb()
-          })
-          .catch(err => {
-            return cb(JSON.stringify(err))
-          })
-      } catch (err) {
-        return cb(ERROR.IMP_ERROR)
-      }
     }
   ],
     function (err) {
@@ -183,6 +151,21 @@ module.exports.post = async function (request, callback) {
   )
 
 }
+
+
+module.exports.post = async function (request, callback) {
+  MODELS.WorkspaceQueries.create({
+    workspace_id: request.params.id,
+    ...request.payload
+  })
+    .then(data => {
+      return callback(null, data)
+    })
+    .catch(err => {
+      return callback(JSON.stringify(err))
+    })
+}
+
 
 module.exports.put = function (request, callback) {
   MODELS.WorkspaceQueries.update({

@@ -108,6 +108,46 @@ const postQuery = {
   }
 }
 
+
+const postRunQuery = {
+  method: "POST",
+  path: "/api/ws/{id}/queries/run",
+  config: {
+    description: "Run a query without saving it in a workspace",
+    auth: 'UserAuth',
+    tags: ["api", "ws", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        WorkspaceQueryController.postRun(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      payload: {
+        q_type: Joi.string().required(),
+        name: Joi.string().required(),
+        query: Joi.object().required()
+      },
+      params: {
+        id: Joi.number().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
+
 const putQuery = {
   method: "PUT",
   path: "/api/ws/{workspace_id}/queries/{id}",
@@ -234,6 +274,7 @@ module.exports = [
   getAllQueries,
   getQuery,
   postQuery,
+  postRunQuery,
   putQuery,
   deleteQuery,
   uploadFile
