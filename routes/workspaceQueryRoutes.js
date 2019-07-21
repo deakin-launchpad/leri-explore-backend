@@ -112,7 +112,7 @@ const runQuery = {
   method: "POST",
   path: "/api/query/run",
   config: {
-    description: "Post a query to a to run",
+    description: "Post a query to run",
     auth: 'UserAuth',
     tags: ["api", "run", "query"],
     handler: function (request, h) {
@@ -128,7 +128,8 @@ const runQuery = {
     validate: {
       payload: {
         q_type: Joi.string().required(),
-        query: Joi.object().required()
+        query: Joi.object().required(),
+        name:Joi.string().optional()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
