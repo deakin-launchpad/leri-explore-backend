@@ -117,7 +117,7 @@ const runQuery = {
     tags: ["api", "run", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        WorkspaceQueryController.runStringQuery(request, function (err, data) {
+        WorkspaceQueryController.runQuery(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           return resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)

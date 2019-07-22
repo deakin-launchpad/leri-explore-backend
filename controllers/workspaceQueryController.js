@@ -34,15 +34,13 @@ module.exports.get = function (request, callback) {
 }
 
 const PredefinedParameterizedQueries = {
-  shinchan: function (request, callback) {
+  shinchan: function (payload, callback) {
     let projections = [], groupBys = [], prepareCases = []
-
-    if (!request.payload.query.data) return callback("query.data is required")
-
-    let qData = request.payload.query.data
+    if (!payload.query.data) return callback("query.data is required")
+    let qData = payload.query.data
     if (!qData.groups || !qData.cases || !qData.sensor) return callback("Please send all required data for this PARAMETERIZED query")
 
-    request.payload.query.data.groups.forEach(group => {
+    payload.query.data.groups.forEach(group => {
       switch (group) {
         case "year":
           projections.push("date_part('year', t.tstp) as year")
@@ -63,7 +61,7 @@ const PredefinedParameterizedQueries = {
       }
     })
 
-    request.payload.query.data.cases.forEach(item => {
+    payload.query.data.cases.forEach(item => {
       if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
       else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
       else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
@@ -82,7 +80,7 @@ const PredefinedParameterizedQueries = {
           from ( \
               select c, tstp \
               from ( \
-                  select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
+                  select s${payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
               ) as agg \
           ) as foo \
       ) as t \
@@ -98,7 +96,6 @@ const PredefinedParameterizedQueries = {
     */
 
     let resultData
-
     async.series([
       function (cb) {
         sequelizeInstance.query(query)
@@ -110,22 +107,6 @@ const PredefinedParameterizedQueries = {
           .catch(err => {
             return cb(JSON.stringify(err))
           })
-      },
-      function (cb) {
-        try {
-          MODELS.WorkspaceQueries.create({
-            workspace_id: request.params.id,
-            ...request.payload
-          })
-            .then(() => {
-              return cb()
-            })
-            .catch(err => {
-              return cb(JSON.stringify(err))
-            })
-        } catch (err) {
-          return cb(ERROR.IMP_ERROR)
-        }
       }
     ],
       function (err) {
@@ -136,6 +117,7 @@ const PredefinedParameterizedQueries = {
   }
 
 }
+
 
 module.exports.post = async function (request, callback) {
   if (request.payload.q_type === "PARAMETERIZED") {
@@ -181,10 +163,12 @@ module.exports.post = async function (request, callback) {
   )
 }
 
-module.exports.runStringQuery = async function (request, callback) {
-
+module.exports.runQuery = async function (request, callback) {
+  if (request.payload.q_type === "PARAMETERIZED") {
+    if (!PredefinedParameterizedQueries.hasOwnProperty(request.payload.name)) return callback("That paramterized query doesn't exist")
+    return PredefinedParameterizedQueries[request.payload.name](request.payload, callback)
+  }
   if (!request.payload.query.string) return callback("query.string is required")
-
   let resultData
 
   async.series([
@@ -206,7 +190,6 @@ module.exports.runStringQuery = async function (request, callback) {
     }
   )
 }
-
 module.exports.put = function (request, callback) {
   MODELS.WorkspaceQueries.update({
     ...request.payload
