@@ -8,5 +8,6 @@ module.exports = {
   ResearcherController: require('./researcherController'),
   WorkspaceResearcherController: require('./workspaceResearcherController'),
   AgeActivityRangeLookupController: require('./ageActivityRangeLookupController'),
-  SchoolPeriodLookupsController: require('./schoolPeriodLookupsController')
+  SchoolPeriodLookupsController: require('./schoolPeriodLookupsController'),
+  GenericLookupsController: require('./genericLookupsController')
 }

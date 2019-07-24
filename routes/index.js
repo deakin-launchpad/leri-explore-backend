@@ -6,5 +6,6 @@ module.exports = [].concat(
   require('./workspaceRoutes'),
   require('./ageActivityRangeLookupRoutes'),
   require('./schoolPeriodLookupsRoutes'),
-  require('./workspaceResearcherRoutes')
+  require('./workspaceResearcherRoutes'),
+  require('./genericLookupsRoutes')
 )
