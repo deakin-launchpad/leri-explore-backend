@@ -74,13 +74,11 @@ const PredefinedParameterizedQueries = {
 
           // Period name, start and end time will be sent by the frontend
           request.payload.query.data.periods.forEach(item => {
-            if (item.period_name && item.period_start && item.period_end) {
+            if (item.range_name && item.from && item.to) {
               preparePeriods.push(
-                `when date_part('hour', foo.tstp) between \
-            date_part('hour',  TIMESTAMP '${item.period_start}') and date_part('hour', TIMESTAMP '${item.period_end}') AND 
-            date_part('minute', foo.tstp) between \
-            date_part('minute', TIMESTAMP '${item.period_start}') and date_part('minute', TIMESTAMP '${item.period_end}') 
-            THEN '${item.period_name}'`)
+                `when foo.tstp::time BETWEEN \
+                TIME '${item.from}' AND TIME '${item.to}' \
+                THEN '${item.range_name}'`)
             }
           })
 
@@ -91,9 +89,9 @@ const PredefinedParameterizedQueries = {
     })
 
     request.payload.query.data.cases.forEach(item => {
-      if (item.min && item.max) prepareCases.push(`when foo.c between ${item.min} and ${item.max} then '${item.min} - ${item.max}'`)
-      else if (item.min) prepareCases.push(`when foo.c > ${item.min} then '> ${item.min}'`)
-      else if (item.max) prepareCases.push(`when foo.c < ${item.max} then '< ${item.max}'`)
+      if (item.from && item.to) prepareCases.push(`when foo.c between ${item.from} and ${item.to} then '${item.from} - ${item.to}'`)
+      else if (item.from) prepareCases.push(`when foo.c > ${item.from} then '> ${item.from}'`)
+      else if (item.to) prepareCases.push(`when foo.c < ${item.to} then '< ${item.to}'`)
     })
 
     const query = `select \
