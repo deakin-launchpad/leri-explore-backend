@@ -1,4 +1,4 @@
-const async = require('async')
+const moment = require('moment')
 
 const Workspaces = require('./WorkspacesModel')
 const ResearcherEmailLookups = require('./ResearcherEmailLookupsModel')
@@ -6,6 +6,7 @@ const ResearcherWorkspaces = require('./ResearcherWorkspacesModel')
 const WorkspaceQueries = require('./WorkspaceQueriesModel')
 const UserSensors = require('./UserSensorsModel')
 const AgeActivityRangeLookups = require('./AgeActivityRangeLookupsModel')
+const SchoolPeriodLookups = require('./SchoolPeriodLookupsModel')
 
 
 async function seed() {
@@ -80,6 +81,24 @@ AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon..
 
   })
 
+SchoolPeriodLookups.sync({ force: true })
+.then(() => {
+  let allObjs = [], i, j
+  
+  for (let i = 0; i < 10; ++i) {
+    for (let j = 0; j < 10; ++j) {
+      allObjs.push({
+        school_id: i,
+        period_name: `P${j+1}`,
+        period_start: moment().year(2000).dayOfYear(2).hour(-4).minute((j)*50+i%5).toISOString() ,
+        period_end: moment().year(2000).dayOfYear(2).hour(-4).minute((j+1)*50+i%5).toISOString() ,
+      })
+    }
+  }
+
+  SchoolPeriodLookups.bulkCreate(allObjs)
+})
+
 
 module.exports = {
   Workspaces: Workspaces,
@@ -88,4 +107,5 @@ module.exports = {
   WorkspaceQueries: WorkspaceQueries,
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,
+  SchoolPeriodLookups: SchoolPeriodLookups
 }

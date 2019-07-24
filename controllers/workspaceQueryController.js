@@ -35,14 +35,16 @@ module.exports.get = function (request, callback) {
 
 const PredefinedParameterizedQueries = {
   shinchan: function (request, callback) {
-    let projections = [], groupBys = [], prepareCases = []
+    let projections = [], groupBys = [], prepareCases = [], finalPreparedPeriodsStatement
 
     if (!request.payload.query.data) return callback("query.data is required")
 
     let qData = request.payload.query.data
     if (!qData.groups || !qData.cases || !qData.sensor) return callback("Please send all required data for this PARAMETERIZED query")
 
-    request.payload.query.data.groups.forEach(group => {
+    const groupsSet = [...new Set(request.payload.query.data.groups)]
+
+    groupsSet.forEach(group => {
       switch (group) {
         case "year":
           projections.push("date_part('year', t.tstp) as year")
@@ -59,6 +61,31 @@ const PredefinedParameterizedQueries = {
         case "hour":
           projections.push("date_part('hour', t.tstp) as hour")
           groupBys.push("hour")
+          break
+        case "periods":
+          if (!request.payload.query.data.periods || request.payload.query.data.periods.length === 0)
+            return callback("Please include valid period objects when selecting `periods` group by")
+
+          projections.push("t.period as periods")
+          groupBys.push("periods")
+
+
+          let preparePeriods = []
+
+          // Period name, start and end time will be sent by the frontend
+          request.payload.query.data.periods.forEach(item => {
+            if (item.period_name && item.period_start && item.period_end) {
+              preparePeriods.push(
+                `when date_part('hour', foo.tstp) between \
+            date_part('hour',  TIMESTAMP '${item.period_start}') and date_part('hour', TIMESTAMP '${item.period_end}') AND 
+            date_part('minute', foo.tstp) between \
+            date_part('minute', TIMESTAMP '${item.period_start}') and date_part('minute', TIMESTAMP '${item.period_end}') 
+            THEN '${item.period_name}'`)
+            }
+          })
+
+          finalPreparedPeriodsStatement = `case ${preparePeriods.join(' ')} end as period,`
+
           break
       }
     })
@@ -78,12 +105,10 @@ const PredefinedParameterizedQueries = {
           select case \
           ${prepareCases.join(' ')} \
           end as range, \
-          foo.tstp as tstp \
+          ${finalPreparedPeriodsStatement ? finalPreparedPeriodsStatement : ''} \
+          c, tstp \
           from ( \
-              select c, tstp \
-              from ( \
-                  select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
-              ) as agg \
+            select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
           ) as foo \
       ) as t \
       group by \
