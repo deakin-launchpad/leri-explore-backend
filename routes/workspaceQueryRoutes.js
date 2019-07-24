@@ -129,7 +129,7 @@ const postRunQuery = {
     validate: {
       payload: {
         q_type: Joi.string().required(),
-        name: Joi.string().required(),
+        name: Joi.string(),
         query: Joi.object().required()
       },
       params: {
