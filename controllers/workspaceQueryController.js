@@ -106,7 +106,7 @@ const PredefinedParameterizedQueries = {
           ${finalPreparedPeriodsStatement ? finalPreparedPeriodsStatement : ''} \
           c, tstp \
           from ( \
-            select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors \
+            select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors where workspace_id = request.params.id \
           ) as foo \
       ) as t \
       group by \
