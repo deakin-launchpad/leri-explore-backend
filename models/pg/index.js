@@ -11,6 +11,7 @@ const GenericLookups = require('./GenericLookupsModel')
 
 
 async function seed() {
+  if (process.env !== 'test' || 'dev' || 'development') return
 
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
@@ -46,111 +47,109 @@ async function seed() {
       s9: 0
     }))
 
-}
+  AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
+    .then(() => {
 
-seed()
+      let allObjs = []
+      let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      for (let i = 0; i < 100; ++i) { // loop for ages
 
+        let ageSD = 0
+        if (i < 10) ageSD = 0
+        else if (i < 20) ageSD = 20
+        else if (i < 40) ageSD = 10
+        else if (i < 50) ageSD = -10
+        else if (i < 60) ageSD = -20
 
-AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
-  .then(() => {
+        else if (i > 79) ageSD = -50
+        else if (i > 59) ageSD = -30
 
-    let allObjs = []
-    let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    for (let i = 0; i < 100; ++i) { // loop for ages
-
-      let ageSD = 0
-      if (i < 10) ageSD = 0
-      else if (i < 20) ageSD = 20
-      else if (i < 40) ageSD = 10
-      else if (i < 50) ageSD = -10
-      else if (i < 60) ageSD = -20
-
-      else if (i > 79) ageSD = -50
-      else if (i > 59) ageSD = -30
-
-      keys.forEach((k, j) => {
-        allObjs.push({
-          age: i + 1,
-          activityId: k,
-          min: (j * 100 + ageSD) < 0 ? 0 : (j * 100 + ageSD),
-          max: (j + 1) * 100 + ageSD
-        })
-      })
-    }
-
-    AgeActivityRangeLookups.bulkCreate(allObjs)
-
-  })
-
-SchoolPeriodLookups.sync({ force: true })
-  .then(() => {
-    let allObjs = [], i, j
-
-    for (let i = 0; i < 10; ++i) {
-      for (let j = 0; j < 10; ++j) {
-        allObjs.push({
-          school_id: i,
-          period_name: `P${j + 1}`,
-          period_start: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
-          period_end: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
-        })
-      }
-    }
-
-    SchoolPeriodLookups.bulkCreate(allObjs)
-  })
-
-
-GenericLookups.sync({ force: true })
-  .then(() => {
-    let allObjs = [], i, j
-
-    for (let i = 0; i < 10; ++i) {
-      for (let j = 0; j < 10; ++j) {
-        allObjs.push({
-          entity_id: i,
-          lookup_name: "school_id",
-          criteria_type: "range",
-          data_type: "time",
-          criteria: JSON.stringify({
-            range_name: `P${j + 1}`,
-            from: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
-            to: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
+        keys.forEach((k, j) => {
+          allObjs.push({
+            age: i + 1,
+            activityId: k,
+            min: (j * 100 + ageSD) < 0 ? 0 : (j * 100 + ageSD),
+            max: (j + 1) * 100 + ageSD
           })
         })
       }
-    }
 
-    let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    for (let i = 0; i < 100; ++i) { // loop for ages
+      AgeActivityRangeLookups.bulkCreate(allObjs)
 
-      let ageSD = 0
-      if (i < 10) ageSD = 0
-      else if (i < 20) ageSD = 20
-      else if (i < 40) ageSD = 10
-      else if (i < 50) ageSD = -10
-      else if (i < 60) ageSD = -20
+    })
 
-      else if (i > 79) ageSD = -50
-      else if (i > 59) ageSD = -30
+  SchoolPeriodLookups.sync({ force: true })
+    .then(() => {
+      let allObjs = [], i, j
 
-      keys.forEach((k, j) => {
-        allObjs.push({
-          entity_id: i + 1,
-          lookup_name: "age",
-          criteria_type: "range",
-          data_type: "int",
-          criteria: JSON.stringify({
-            range_name: k,
-            min: (j * 100 + ageSD) < 0 ? 0 : (j * 100 + ageSD),
-            max: (j + 1) * 100 + ageSD
-          })          
+      for (let i = 0; i < 10; ++i) {
+        for (let j = 0; j < 10; ++j) {
+          allObjs.push({
+            school_id: i,
+            period_name: `P${j + 1}`,
+            period_start: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
+            period_end: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
+          })
+        }
+      }
+
+      SchoolPeriodLookups.bulkCreate(allObjs)
+    })
+
+  GenericLookups.sync({ force: true })
+    .then(() => {
+      let allObjs = [], i, j
+
+      for (let i = 0; i < 10; ++i) {
+        for (let j = 0; j < 10; ++j) {
+          allObjs.push({
+            entity_id: i,
+            lookup_name: "school_id",
+            criteria_type: "range",
+            data_type: "time",
+            criteria: JSON.stringify({
+              range_name: `P${j + 1}`,
+              from: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
+              to: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
+            })
+          })
+        }
+      }
+
+      let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      for (let i = 0; i < 100; ++i) { // loop for ages
+
+        let ageSD = 0
+        if (i < 10) ageSD = 0
+        else if (i < 20) ageSD = 20
+        else if (i < 40) ageSD = 10
+        else if (i < 50) ageSD = -10
+        else if (i < 60) ageSD = -20
+
+        else if (i > 79) ageSD = -50
+        else if (i > 59) ageSD = -30
+
+        keys.forEach((k, j) => {
+          allObjs.push({
+            entity_id: i + 1,
+            lookup_name: "age",
+            criteria_type: "range",
+            data_type: "int",
+            criteria: JSON.stringify({
+              range_name: k,
+              min: (j * 100 + ageSD) < 0 ? 0 : (j * 100 + ageSD),
+              max: (j + 1) * 100 + ageSD
+            })
+          })
         })
-      })
-    }
+      }
 
-    GenericLookups.bulkCreate(allObjs)
-  })
+      GenericLookups.bulkCreate(allObjs)
+    })
+
+}
+
+seed()
 
 
 module.exports = {
