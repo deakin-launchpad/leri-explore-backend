@@ -8,10 +8,11 @@ const UserSensors = require('./UserSensorsModel')
 const AgeActivityRangeLookups = require('./AgeActivityRangeLookupsModel')
 const SchoolPeriodLookups = require('./SchoolPeriodLookupsModel')
 const GenericLookups = require('./GenericLookupsModel')
+const Mappings = require('./MappingsModel')
 
 
 async function seed() {
-  if (process.env !== 'test' || 'dev' || 'development') return
+  if (process.env.NODE_ENV !== ('test' || 'dev' || 'development')) return
 
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
@@ -109,8 +110,8 @@ async function seed() {
             data_type: "time",
             criteria: JSON.stringify({
               range_name: `P${j + 1}`,
-              from: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
-              to: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
+              min: moment().year(2000).dayOfYear(2).hour(-4).minute((j) * 50 + i % 5).toISOString(),
+              max: moment().year(2000).dayOfYear(2).hour(-4).minute((j + 1) * 50 + i % 5).toISOString(),
             })
           })
         }
@@ -147,6 +148,21 @@ async function seed() {
       GenericLookups.bulkCreate(allObjs)
     })
 
+    Mappings.sync({ force: true })
+    .then(() => Mappings.bulkCreate([
+      {
+        map_name: "tstp_map",
+        end_as: "tstp",
+        eval_expr: "WHEN foo.tstp::time BETWEEN TIME '!@#$min' and TIME '!@#$max' THEN '!@#$range_name'",
+        eval_expr_type: "range"
+      },
+      {
+        map_name: "range_map",
+        end_as: "range",
+        eval_expr: "WHEN foo.c BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
+        eval_expr_type: "range"
+      }
+    ]))
 }
 
 seed()
@@ -160,5 +176,6 @@ module.exports = {
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,
   SchoolPeriodLookups: SchoolPeriodLookups,
-  GenericLookups: GenericLookups
+  GenericLookups: GenericLookups,
+  Mappings: Mappings
 }
