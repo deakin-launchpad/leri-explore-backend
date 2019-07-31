@@ -2,7 +2,7 @@ const Researcher = require('./ResearcherModel')
 const HELPER = require('../../utils/helper')
 
 async function seed() {
-  if (process.env !== 'test' || 'dev' || 'development') return
+  if (process.env.NODE_ENV !== ('test' || 'dev' || 'development')) return
   await Researcher.deleteMany()
 
   await Researcher.create([{
