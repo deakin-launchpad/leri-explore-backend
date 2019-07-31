@@ -37,6 +37,37 @@ const getLookups = {
   }
 }
 
+const getLookupNames = {
+  method: "GET",
+  path: "/api/lookups/names",
+  config: {
+    description: "Get lookup names",
+    auth: 'UserAuth',
+    tags: ["api", "ws", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        GenericLookupsController.getLookupNames(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+      })
+    },
+    validate: {
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
 module.exports = [
-  getLookups
+  getLookups,
+  getLookupNames
 ]
