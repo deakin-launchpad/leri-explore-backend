@@ -5,6 +5,7 @@ const Parser = require('../lib/parser')
 const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 const ERROR = require('../config/appConstants').STATUS_MSG.ERROR
 const async = require('async')
+const queryGenerator = require('../lib/queryGenerator')
 
 module.exports.getAll = function (request, callback) {
   MODELS.WorkspaceQueries.findAll({
@@ -242,4 +243,11 @@ module.exports.uploadFile = function (request, callback) {
       callback(JSON.stringify(err))
     })
   })
+}
+
+module.exports.postQueryV2 = async function (request, callback) {
+  let [err, value] = await queryGenerator.wrapEverything(request.payload)
+
+  callback(err, value)
+
 }

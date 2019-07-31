@@ -269,6 +269,45 @@ const uploadFile = {
   }
 }
 
+const v2Query = {
+  method: "POST",
+  path: "/api/v2/query",
+  config: {
+    description: "Parameterised query v2",
+    auth: 'UserAuth',
+    tags: ["api", "ws", "query"],
+    handler: function (request, h) {
+      return new Promise((resolve, reject) => {
+        
+        console.log(request.payload)
+        
+        WorkspaceQueryController.postQueryV2(request, function (err, data) {
+          if (err) return reject(HELPER.sendError(err))
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          )
+        })
+
+      })
+    },
+    validate: {
+      payload: {
+        where: Joi.string().required(),
+        select: Joi.string().required(),
+        dictionary: Joi.array().min(1).required().description("Array of objects of mappings and lookups")
+      },
+      failAction: HELPER.failActionFunction,
+      headers: HELPER.authorizationHeaderObj
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+}
+
 
 module.exports = [
   getAllQueries,
@@ -277,5 +316,6 @@ module.exports = [
   postRunQuery,
   putQuery,
   deleteQuery,
-  uploadFile
+  uploadFile,
+  v2Query
 ]
