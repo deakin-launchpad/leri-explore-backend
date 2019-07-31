@@ -292,8 +292,8 @@ const v2Query = {
     },
     validate: {
       payload: {
-        where: Joi.string().required(),
-        select: Joi.string().required(),
+        where: Joi.string().description("Where condition for sensor data. NOTE: Not safe from SQL injection"),
+        sensor_id: Joi.number().required(),
         dictionary: Joi.array().min(1).required().description("Array of objects of mappings and lookups")
       },
       failAction: HELPER.failActionFunction,
