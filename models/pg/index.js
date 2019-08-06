@@ -97,6 +97,22 @@ async function seed() {
       SchoolPeriodLookups.bulkCreate(allObjs)
     })
 
+  await Mappings.sync({ force: true })
+  await Mappings.bulkCreate([
+    {
+      map_name: "tstp_map",
+      end_as: "tstp",
+      eval_expr: "WHEN foo.tstp::time BETWEEN TIME '!@#$min' and TIME '!@#$max' THEN '!@#$range_name'",
+      eval_expr_type: "range"
+    },
+    {
+      map_name: "range_map",
+      end_as: "range",
+      eval_expr: "WHEN foo.c BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
+      eval_expr_type: "range"
+    }
+  ])
+
   GenericLookups.sync({ force: true })
     .then(() => {
       let allObjs = [], i, j
@@ -104,6 +120,7 @@ async function seed() {
       for (let i = 0; i < 10; ++i) {
         for (let j = 0; j < 10; ++j) {
           allObjs.push({
+            map_id: 1,
             entity_id: i,
             lookup_name: "school_id",
             criteria_type: "range",
@@ -132,6 +149,7 @@ async function seed() {
 
         keys.forEach((k, j) => {
           allObjs.push({
+            map_id: 2,
             entity_id: i + 1,
             lookup_name: "age",
             criteria_type: "range",
@@ -148,21 +166,6 @@ async function seed() {
       GenericLookups.bulkCreate(allObjs)
     })
 
-    Mappings.sync({ force: true })
-    .then(() => Mappings.bulkCreate([
-      {
-        map_name: "tstp_map",
-        end_as: "tstp",
-        eval_expr: "WHEN foo.tstp::time BETWEEN TIME '!@#$min' and TIME '!@#$max' THEN '!@#$range_name'",
-        eval_expr_type: "range"
-      },
-      {
-        map_name: "range_map",
-        end_as: "range",
-        eval_expr: "WHEN foo.c BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
-        eval_expr_type: "range"
-      }
-    ]))
 }
 
 seed()
