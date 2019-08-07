@@ -101,7 +101,7 @@ async function seed() {
   await Mappings.bulkCreate([
     {
       map_name: "tstp_map",
-      end_as: "tstp",
+      end_as: "period",
       eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
       eval_expr_type: "range"
     },
