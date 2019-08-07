@@ -247,7 +247,13 @@ module.exports.uploadFile = function (request, callback) {
 
 module.exports.postQueryV2 = async function (request, callback) {
   let [err, value] = await queryGenerator.wrapEverything(request.payload)
+  if (!request.payload.run) return callback(err, value)
 
-  callback(err, value)
+  sequelizeInstance.query(value)
+    .then(data => {
+      callback(null, data[0])
+    }).catch(err => {
+      callback(JSON.stringify(err))
+    })
 
 }

@@ -102,13 +102,13 @@ async function seed() {
     {
       map_name: "tstp_map",
       end_as: "tstp",
-      eval_expr: "WHEN foo.tstp::time BETWEEN TIME '!@#$min' and TIME '!@#$max' THEN '!@#$range_name'",
+      eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
       eval_expr_type: "range"
     },
     {
       map_name: "range_map",
       end_as: "range",
-      eval_expr: "WHEN foo.c BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
+      eval_expr: "WHEN foo.selectedSensor BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
       eval_expr_type: "range"
     }
   ])

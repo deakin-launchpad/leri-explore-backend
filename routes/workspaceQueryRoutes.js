@@ -294,7 +294,8 @@ const v2Query = {
       payload: {
         where: Joi.string().description("Where condition for sensor data. NOTE: Not safe from SQL injection"),
         sensor_id: Joi.number().required(),
-        dictionary: Joi.array().min(1).required().description("Array of objects of mappings and lookups")
+        dictionary: Joi.array().min(1).required().description("Array of objects of mappings and lookups"),
+        run: Joi.boolean().default(false).description("Do you want to run the query?")
       },
       failAction: HELPER.failActionFunction,
       headers: HELPER.authorizationHeaderObj
