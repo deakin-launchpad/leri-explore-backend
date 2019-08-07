@@ -17,20 +17,25 @@ async function seed() {
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
   await ResearcherWorkspaces.sync({ force: true })
+
+  ResearcherWorkspaces.hasOne(ResearcherEmailLookups, { foreignKey: 'id', sourceKey: 'researcher_id', as: 'researcher_details' })
+  ResearcherWorkspaces.hasOne(Workspaces, { foreignKey: 'id', sourceKey: 'workspace_id' })
+
   await WorkspaceQueries.sync({ force: true })
 
   await ResearcherEmailLookups.create({ email_id: "akash@test.com" })
   await ResearcherEmailLookups.create({ email_id: "sanchit@test.com" })
 
-  await Workspaces.create({ title: "Workspace 1 for user 1" })
-  await Workspaces.create({ title: "Workspace 2 for user 1" })
+  await Workspaces.create({ title: "Workspace ID 1 for user 1" })
+  await Workspaces.create({ title: "Workspace ID 2 for user 2" })
 
-  await Workspaces.create({ title: "Workspace 1 for user 2" })
+  await Workspaces.create({ title: "Workspace ID 3 for user 1 and user 2" })
 
 
+  await ResearcherWorkspaces.create({ workspace_id: 2, researcher_id: 2 }) // TODO: Note- the order is reversed here on purpose.
   await ResearcherWorkspaces.create({ workspace_id: 1, researcher_id: 1 })
-  await ResearcherWorkspaces.create({ workspace_id: 2, researcher_id: 1 })
 
+  await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 1 })
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
 
   UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table

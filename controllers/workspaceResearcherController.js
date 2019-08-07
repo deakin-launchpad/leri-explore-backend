@@ -1,14 +1,14 @@
 'use strict'
 
 const MODELS = require('../models')
-const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 
 module.exports.createWorkspaceResearcher = function (request, callback) {
   let researcher_id
+  const payload = request.payload
 
   MODELS.ResearcherEmailLookups.findOne({
     where: {
-      email_id: request.payload.emailId
+      email_id: payload.emailId
     }
   })
     .then(data => {
@@ -16,7 +16,7 @@ module.exports.createWorkspaceResearcher = function (request, callback) {
         return callback({
           "statusCode": 400,
           "error": "Bad Request",
-          "customMessage": `User record with email ID ${userData.emailId} not found`
+          "customMessage": `User record with email ID ${payload.emailId} not found`
         })
       }
 
@@ -34,7 +34,7 @@ module.exports.createWorkspaceResearcher = function (request, callback) {
         return callback({
           "statusCode": 400,
           "error": "Bad Request",
-          "customMessage": `Workspace record with workspace ID ${userData.emailId} not found`
+          "customMessage": `Workspace record with workspace ID ${request.params.id} not found`
         })
       }
 
@@ -48,8 +48,8 @@ module.exports.createWorkspaceResearcher = function (request, callback) {
     .then(data => {
       if (data[1] === false) return callback({
         "statusCode": 400,
-          "error": "Bad Request",
-          "customMessage": `Researcher already exists in this workspace`
+        "error": "Bad Request",
+        "customMessage": `Researcher already exists in this workspace`
       })
       callback(null, data[0])
     }).catch(err => {
@@ -62,11 +62,23 @@ module.exports.getAllWorkspaceResearchers = function (request, callback) {
   MODELS.ResearcherWorkspaces.findAll({
     where: {
       workspace_id: request.params.id
-    }
+    },
+    include: [{
+      model: MODELS.ResearcherEmailLookups,
+      as: 'researcher_details',
+      required: true
+    }]
   })
     .then(data => {
+      if (!data) return callback({
+        "statusCode": 400,
+        "error": "Bad Request",
+        "customMessage": "No record found. Please check request parameters."
+      })
+
       callback(null, data)
     }).catch(err => {
+      console.log(err)
       callback(JSON.stringify(err))
     })
 }
@@ -77,9 +89,20 @@ module.exports.getWorkspaceResearcher = function (request, callback) {
     where: {
       workspace_id: request.params.workspace_id,
       researcher_id: request.params.id
-    }
+    },
+    include: [{
+      model: MODELS.ResearcherEmailLookups,
+      as: 'researcher_details',
+      required: true
+    }]
   })
     .then(data => {
+      if (!data) return callback({
+        "statusCode": 400,
+        "error": "Bad Request",
+        "customMessage": "No record found. Please check request parameters."
+      })
+
       callback(null, data)
     }).catch(err => {
       callback(JSON.stringify(err))
