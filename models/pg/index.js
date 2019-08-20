@@ -12,7 +12,7 @@ const Mappings = require('./MappingsModel')
 
 
 async function seed() {
-  if (process.env.NODE_ENV !== ('test' || 'dev' || 'development')) return
+  if (process.env.NODE_ENV !== 'test' || process.env.NODE_ENV !== 'dev' || process.env.NODE_ENV !== 'development') return
 
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
@@ -32,8 +32,8 @@ async function seed() {
   await Workspaces.create({ title: "Workspace ID 3 for user 1 and user 2" })
 
 
-  await ResearcherWorkspaces.create({ workspace_id: 2, researcher_id: 2 }) // TODO: Note- the order is reversed here on purpose.
   await ResearcherWorkspaces.create({ workspace_id: 1, researcher_id: 1 })
+  await ResearcherWorkspaces.create({ workspace_id: 2, researcher_id: 2 })
 
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 1 })
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
