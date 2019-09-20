@@ -191,7 +191,7 @@ const deleteQuery = {
   method: "DELETE",
   path: "/api/ws/{workspace_id}/queries/{id}",
   config: {
-    description: "Update a query in a workspace",
+    description: "Delete a query in a workspace",
     auth: 'UserAuth',
     tags: ["api", "ws", "query"],
     handler: function (request, h) {
@@ -278,9 +278,6 @@ const v2Query = {
     tags: ["api", "ws", "query"],
     handler: function (request, h) {
       return new Promise((resolve, reject) => {
-        
-        console.log(request.payload)
-        
         WorkspaceQueryController.postQueryV2(request, function (err, data) {
           if (err) return reject(HELPER.sendError(err))
           resolve(
@@ -297,6 +294,7 @@ const v2Query = {
         dictionary: Joi.array().min(1).required().description("Array of objects of mappings and lookups"),
         run: Joi.boolean().default(false).description("Do you want to run the query?"),
         groups: Joi.array(),
+        users: Joi.array().min(1),
         having: Joi.string()
       },
       failAction: HELPER.failActionFunction,

@@ -5,9 +5,9 @@ const MappingsController = require("../controllers").MappingsController
 
 const getMappings = {
   method: "GET",
-  path: "/api/mappings/names",
+  path: "/api/mappings",
   config: {
-    description: "Get lookup names",
+    description: "Get maps' names",
     auth: 'UserAuth',
     tags: ["api", "ws", "query"],
     handler: function (request, h) {

@@ -226,6 +226,7 @@ module.exports.uploadFile = function (request, callback) {
     MODELS.UserSensors.bulkCreate(data, {
       fields: [
         "workspace_id",
+        "user_id",
         "timestamp",
         "s1",
         "s2",
@@ -246,14 +247,18 @@ module.exports.uploadFile = function (request, callback) {
 }
 
 module.exports.postQueryV2 = async function (request, callback) {
-  let [err, value] = await queryGenerator.wrapEverything(request.payload)
-  if (!request.payload.run) return callback(err, value)
+  let generatedQueries = [], finalData = []
+  for (let i = 0; i < request.payload.users.length; ++i) {
+    let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
+    if (err) return callback(err)
+    generatedQueries.push(value)
+  }
+  if (!request.payload.run) return callback(null, generatedQueries)
 
-  sequelizeInstance.query(value)
-    .then(data => {
-      callback(null, data[0])
-    }).catch(err => {
-      callback(JSON.stringify(err))
-    })
+  for (let i = 0; i < generatedQueries.length; ++i) {
+    let value = await sequelizeInstance.query(generatedQueries[i])
+    finalData.push(value[0])
+  }
 
+  return callback(null, finalData)
 }

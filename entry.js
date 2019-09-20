@@ -1,7 +1,7 @@
 'use strict'
 // Read .env file.
 require('dotenv').config()
-require('pretty-error').start()
+// require('pretty-error').start()
 const async = require('async')
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'

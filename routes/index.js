@@ -8,7 +8,8 @@ module.exports = [].concat(
   require('./schoolPeriodLookupsRoutes'),
   require('./workspaceResearcherRoutes'),
   require('./genericLookupsRoutes'),
-  require('./mappingsRoutes')
+  require('./mappingsRoutes'),
+  require('./participantsRoutes')
 )
 
 if (process.env === 'test' || 'dev' || 'development') {

@@ -9,11 +9,12 @@ const AgeActivityRangeLookups = require('./AgeActivityRangeLookupsModel')
 const SchoolPeriodLookups = require('./SchoolPeriodLookupsModel')
 const GenericLookups = require('./GenericLookupsModel')
 const Mappings = require('./MappingsModel')
+const Participants = require('./ParticipantsModel')
 
 
 async function seed() {
-  if (process.env.NODE_ENV !== 'test' || process.env.NODE_ENV !== 'dev' || process.env.NODE_ENV !== 'development') return
-
+  if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'development') return
+  
   await Workspaces.sync({ force: true })
   await ResearcherEmailLookups.sync({ force: true })
   await ResearcherWorkspaces.sync({ force: true })
@@ -105,20 +106,24 @@ async function seed() {
   await Mappings.sync({ force: true })
   await Mappings.bulkCreate([
     {
-      map_name: "tstp_map",
-      end_as: "period",
+      map_name: "school_periods_map",
+      end_as: "school_periods",
       eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
-      eval_expr_type: "range"
+      eval_expr_type: "range",
+      lookup_key: "school_id",
+      group_bys: ["year", "month", "day", "hour", "school_periods"]
     },
     {
-      map_name: "range_map",
-      end_as: "range",
+      map_name: "activity_ranges_map",
+      end_as: "activity_ranges",
       eval_expr: "WHEN foo.selectedSensor BETWEEN !@#$min and !@#$max THEN '!@#$range_name'",
-      eval_expr_type: "range"
+      eval_expr_type: "range",
+      lookup_key: "age",
+      group_bys: ["activity_ranges"]
     }
   ])
 
-  GenericLookups.sync({ force: true })
+  await GenericLookups.sync({ force: true })
     .then(() => {
       let allObjs = []
 
@@ -127,7 +132,9 @@ async function seed() {
           allObjs.push({
             map_id: 1,
             entity_id: i,
-            lookup_name: "school_id",
+            // entity_name: "school_id",
+            lookup_name: "default_school_periods_lookup",
+            // lookup_name: "School period lookup",
             criteria_type: "range",
             data_type: "time",
             criteria: JSON.stringify({
@@ -156,7 +163,9 @@ async function seed() {
           allObjs.push({
             map_id: 2,
             entity_id: i + 1,
-            lookup_name: "age",
+            // entity_name: "age",
+            lookup_name: "default_age_activities_lookup",
+            // lookup_name: "Age activity-range lookup",
             criteria_type: "range",
             data_type: "int",
             criteria: JSON.stringify({
@@ -185,5 +194,6 @@ module.exports = {
   AgeActivityRangeLookups: AgeActivityRangeLookups,
   SchoolPeriodLookups: SchoolPeriodLookups,
   GenericLookups: GenericLookups,
-  Mappings: Mappings
+  Mappings: Mappings,
+  Participants: Participants
 }

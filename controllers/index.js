@@ -10,5 +10,6 @@ module.exports = {
   AgeActivityRangeLookupController: require('./ageActivityRangeLookupController'),
   SchoolPeriodLookupsController: require('./schoolPeriodLookupsController'),
   GenericLookupsController: require('./genericLookupsController'),
-  MappingsController: require('./mappingsController')
+  MappingsController: require('./mappingsController'),
+  ParticipantsController: require('./participantsController')
 }
