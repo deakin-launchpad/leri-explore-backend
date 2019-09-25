@@ -22,9 +22,9 @@ const getLookups = {
     },
     validate: {
       query: {
-        entity_id: Joi.string().required(),
+        entity_id: Joi.string(),
         lookup_name: Joi.string(),
-        map_id: Joi.string().required()
+        map_id: Joi.number().required()
       },
       headers: HELPER.authorizationHeaderObj,
       failAction: HELPER.failActionFunction
