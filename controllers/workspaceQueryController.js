@@ -257,7 +257,10 @@ module.exports.postQueryV2 = async function (request, callback) {
 
   for (let i = 0; i < generatedQueries.length; ++i) {
     let value = await sequelizeInstance.query(generatedQueries[i])
-    finalData.push(value[0])
+    finalData.push({
+      user_id: request.payload.users[i].id,
+      data: value[0]
+    })
   }
 
   return callback(null, finalData)
