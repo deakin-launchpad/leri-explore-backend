@@ -45,3 +45,6 @@ uploads
 .vscode/settings.json
 
 test.js
+
+# Data directory in project root used for volumes
+/data

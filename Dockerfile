@@ -1,8 +1,6 @@
 FROM node:10
 
 WORKDIR /app
-COPY . .
-
-EXPOSE 8000
+# COPY .env .
 
 RUN npm install

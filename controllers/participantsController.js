@@ -9,7 +9,7 @@ const MongoClient = require("mongoose").mongo.MongoClient
 
 module.exports.getAll = function (request, callback) {
 
-  MongoClient.connect('mongodb://localhost/ipan-v2-backend', (err, mongoConn) => {
+  MongoClient.connect(process.env.IPAN_V2_BACKEND_MONGO_URI, (err, mongoConn) => {
     if (err) return callback(err)
 
     const options = {

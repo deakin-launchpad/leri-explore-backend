@@ -1,27 +1,42 @@
 version: "2"
 services:
   app:
-    container_name: leri-explore-backend-dev
-    image: deakinlaunchpad/leri-explore-backend-dev
+    container_name: leri_explore_backend_development
+    build: .
     restart: always
-    environment:
-      - DB_USERNAME=leri_explore_admin
-      - DB_PASSWORD=password
-      - DB_DATABASE=leri_explore_dev
-      - DB_HOST=postgres_leri_dev
     command: bash -c "node setup.js && node entry.js"
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
     links:
-      - postgres_leri_dev
-  postgres_leri_dev:
-    container_name: postgres_leri_dev
+      - mongo
+      - postgres
+    env_file:
+      - docker.development.env
+
+  postgres:
+    container_name: postgres
     image: postgres:11
-    environment:
-      - POSTGRES_USER=leri_explore_admin
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=leri_explore_dev
+    restart: always
     volumes:
-      - ./data:/data/leri-explore-backend-dev/db
-    ports:
-      - "54320:5432"
+      - ./data/postgres:/data/db
+    # ports:
+    #   - "5432:5432"
+    # environment:
+    #   - POSTGRES_USER=${POSTGRES_USER}
+    #   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    #   - POSTGRES_DB=${POSTGRES_DB}
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    # restart: always
+    volumes:
+      - ./data/mongo:/data/db
+    # ports:
+    #   - "27018:27017"
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=${MONGO_DEFAULT_DB_ADMIN_USERNAME}
+    #   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DEFAULT_DB_ADMIN_PASSWORD}
+    #   - MONGO_INITDB_DATABASE=admin
