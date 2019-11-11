@@ -24,7 +24,8 @@ module.exports.getAll = function (request, callback) {
         codeUpdatedAt: 0,
         _id: 0,
         __v: 0,
-        countryCode: 0
+        countryCode: 0,
+        tempPassword: 0
       }
     }
 
