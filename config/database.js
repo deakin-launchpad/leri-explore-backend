@@ -3,6 +3,7 @@ const config = {
     default: {
       admin_username: process.env.MONGO_DEFAULT_DB_ADMIN_USERNAME,
       admin_password: process.env.MONGO_DEFAULT_DB_ADMIN_PASSWORD,
+      adapter: process.env.MONGO_DEFAULT_DB_ADAPTER,
       username: process.env.MONGO_DEFAULT_DB_USERNAME,
       password: process.env.MONGO_DEFAULT_DB_PASSWORD,
       host: process.env.MONGO_DEFAULT_DB_HOST,
@@ -53,6 +54,7 @@ const config = {
     default: {
       admin_username: process.env.PG_DEFAULT_DB_ADMIN_USERNAME,
       admin_password: process.env.PG_DEFAULT_DB_ADMIN_PASSWORD,
+      adapter: process.env.PG_DEFAULT_DB_ADAPTER,
       username: process.env.PG_DEFAULT_DB_USERNAME,
       password: process.env.PG_DEFAULT_DB_PASSWORD,
       host: process.env.PG_DEFAULT_DB_HOST,

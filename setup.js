@@ -32,7 +32,7 @@ async.series([
   function (cb) {
     MongoClient.connect(mongoURI, (err, res) => {
       if (err) return cb(err)
-      console.log('DB connected.')
+      console.log('MongoDB connected.')
       mongoConn = res
       cb()
     })
@@ -40,21 +40,22 @@ async.series([
   function (cb) {
     // TODO: Create user with all required permissions for DB, including creating and dropping the database
     mongoConn.db(mongoConfig.database).command({ createUser: mongoConfig.username, pwd: mongoConfig.password, roles: ["readWrite"] }, (err) => {
-      if (err) return cb(err)
+      // We are not throwing error anymore because we still want the next thing to work. Error here could be that the DB user already exists.
+      if (err) console.log(err)
       cb()
     })
   },
   async function () {
     pgConn = new Client({
       host: pgConfig.host,
-      username: pgConfig.admin_username,
+      user: pgConfig.admin_username,
       password: pgConfig.admin_password,
-      database: 'postgres', // TODO: Verify if hardcoding this works in docker as well.
+      port: pgConfig.port,
     })
 
-    await pgConn.connect()
-
     console.log(pgConfig)
+    await pgConn.connect()
+    console.log('PG connected.')
 
     // const res = await pgConn.query(`SELECT now()`)
     const res = await pgConn.query(`SELECT now();`)
@@ -69,11 +70,10 @@ async.series([
   function (err) {
     if (err) {
       console.error(err)
-      process.exit(1)
     }
-    console.log(`User ${mongoConfig.username} created for ${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.database}.`)
-    console.log("If you run setup script again without dropping the user, you will receive an error, saying that the user exists.")
-    console.log("If you run `show dbs` command in Mongo shell, the create database will not appear since it doesn't have any collections yet, even though the user has been added.")
+    // console.log(`User ${mongoConfig.username} created for ${mongoConfig.host}:${mongoConfig.port}/${mongoConfig.database}.`)
+    // console.log("If you run setup script again without dropping the user, you will receive an error, saying that the user exists.")
+    // console.log("If you run `show dbs` command in Mongo shell, the create database will not appear since it doesn't have any collections yet, even though the user has been added.")
     process.exit(0)
   }
 )

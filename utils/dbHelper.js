@@ -12,7 +12,7 @@ module.exports = class DBHelper {
 
   connectMongoose(callback) {
     const mongoose = require('mongoose')
-    mongoose.connect(this.getConnector(),{ useNewUrlParser: true }, (err) => {
+    mongoose.connect(this.getConnector(), { useNewUrlParser: true }, (err) => {
       if (err) {
         console.log("\n\nDB Error: ", err)
         return process.exit(1)
