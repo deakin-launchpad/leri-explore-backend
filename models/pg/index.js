@@ -10,6 +10,8 @@ const SchoolPeriodLookups = require('./SchoolPeriodLookupsModel')
 const GenericLookups = require('./GenericLookupsModel')
 const Mappings = require('./MappingsModel')
 const Participants = require('./ParticipantsModel')
+//Importing UserDevicesModel
+const UserDevices = require('./UserDevicesModel')
 
 
 async function seed() {
@@ -38,6 +40,34 @@ async function seed() {
 
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 1 })
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
+
+  //Creating new table for User Devices model and adding demo values
+  await UserDevices.sync({ force: true })
+  await UserDevices.bulkCreate([{
+    user_id: '12345',
+    device_id: '11',
+    from_time: moment().year(2019).month(05).date(12).toISOString(),
+    to_time: moment().year(2019).month(07).date(20).toISOString()
+  },
+  {
+    user_id: '12346',
+    device_id: '11',
+    from_time: moment().year(2019).month(12).date(12).toISOString(),
+    to_time: moment().year(2019).month(05).date(23).toISOString()
+  },
+  {
+    user_id: '12347',
+    device_id: '22',
+    from_time: moment().year(2019).month(07).date(20).toISOString(),
+    to_time: moment().year(2019).month(08).date(14).toISOString()
+  },
+  {
+    user_id: '12348',
+    device_id: '22',
+    from_time: moment().year(2019).month(04).date(12).toISOString(),
+    to_time: moment().year(2019).month(09).date(23).toISOString()
+  }])
+
 
   UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
     .then(() => UserSensors.create({
@@ -195,5 +225,6 @@ module.exports = {
   SchoolPeriodLookups: SchoolPeriodLookups,
   GenericLookups: GenericLookups,
   Mappings: Mappings,
-  Participants: Participants
+  Participants: Participants,
+  UserDevices: UserDevices
 }

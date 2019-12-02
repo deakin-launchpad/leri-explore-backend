@@ -11,5 +11,6 @@ module.exports = {
   SchoolPeriodLookupsController: require('./schoolPeriodLookupsController'),
   GenericLookupsController: require('./genericLookupsController'),
   MappingsController: require('./mappingsController'),
-  ParticipantsController: require('./participantsController')
+  ParticipantsController: require('./participantsController'),
+  UserDevicesController: require('./userDevicesController')
 }
