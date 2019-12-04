@@ -15,7 +15,22 @@ UserSensors.init({
       key: 'id'
     }
   },
-  user_id: Sequelize.STRING,
+  participantId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    required: true,
+    references:{
+      model: 'participants',
+      key: 'id'
+    }},
+
+  deviceId: {type: Sequelize.INTEGER,
+    allowNull: false,
+    required: true,
+    references:{
+      model: 'devices',
+      key: 'id'
+    }},
   timestamp: { type: 'TIMESTAMP', defaultValue: Sequelize.NOW },
   s1: Sequelize.INTEGER,
   s2: Sequelize.INTEGER,

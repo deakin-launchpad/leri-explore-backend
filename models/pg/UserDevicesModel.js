@@ -10,16 +10,25 @@
 const Sequelize = require('sequelize');
 const sequelizeInstance = require('../../utils/dbHelper').getPGConnection();
 
+
 //Class definition
 class UserDevices extends Sequelize.Model { }
 
 //Initialize model
 UserDevices.init({
     //Defining user_id attribute (required and not null)  
-    user_id: {type: Sequelize.STRING, required: true, allowNull: false},
+    participantId: {type: Sequelize.INTEGER, required: true, allowNull: false, references:{
+      model: 'participants',
+      key: 'id'
+    }
+},
     
     //Defining device_id attribute (required and not null)
-    device_id: {type: Sequelize.STRING, required: true, allowNull: false},
+    deviceId: {type: Sequelize.INTEGER, required: true, allowNull: false, references:{
+      model: 'devices',
+      key: 'id'
+    }
+  },
 
     //Defining from_time attribute. Stores time from when the device is used by user (required and not null)
     from_time: {type: 'TIMESTAMP', required: true, allowNull: false},
@@ -27,6 +36,7 @@ UserDevices.init({
     //Defining to_time attribute. Stores time till when the user uses the device (not required and can be null)
     to_time: {type: 'TIMESTAMP', required: false, allowNull: true}
 },{ sequelize: sequelizeInstance, modelName: 'user_devices' });
+
 
 
 module.exports = UserDevices;

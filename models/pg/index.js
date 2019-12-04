@@ -11,7 +11,9 @@ const GenericLookups = require('./GenericLookupsModel')
 const Mappings = require('./MappingsModel')
 const Participants = require('./ParticipantsModel')
 //Importing UserDevicesModel
-const UserDevices = require('./UserDevicesModel')
+const UserDevices = require('./UserDevicesModel');
+//Importing DevicesModel
+const Devices = require('./DevicesModel');
 
 
 async function seed() {
@@ -26,8 +28,8 @@ async function seed() {
 
   await WorkspaceQueries.sync({ force: true })
 
-  await ResearcherEmailLookups.create({ email_id: "akash@test.com" })
-  await ResearcherEmailLookups.create({ email_id: "sanchit@test.com" })
+  await ResearcherEmailLookups.create({ email_id: "akash@test.com", name: 'Akash' })
+  await ResearcherEmailLookups.create({ email_id: "sanchit@test.com", name: 'Sanchit' })
 
   await Workspaces.create({ title: "Workspace ID 1 for user 1" })
   await Workspaces.create({ title: "Workspace ID 2 for user 2" })
@@ -41,37 +43,53 @@ async function seed() {
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 1 })
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
 
+  //Creating new table to store device ids
+  await Devices.sync({force: true});
+  await Devices.bulkCreate([{device_id: '1a'}, {device_id: '1b'}, {device_id: '2a'}, {device_id: '2b'}]);
+
+  //Creating participants table //TODO: Fetch email id and age from mongo db to populate participants data
+  await Participants.sync({force: true});
+  await Participants.bulkCreate([
+    {email_id: 'participant1@test.com', age: 10}, 
+    {email_id: 'participant2@test.com', age: 25}, 
+    {email_id: 'participant3@test.com', age: 27}]);
+
   //Creating new table for User Devices model and adding demo values
-  await UserDevices.sync({ force: true })
+  await UserDevices.sync({ force: true });
+  //UserDevices.hasOne(Devices, { foreignKey: 'deviceId'});
+  UserDevices.hasOne(Participants, {foreignKey: 'id', sourceKey: 'participantId', as: 'participant_details'});
   await UserDevices.bulkCreate([{
-    user_id: '12345',
-    device_id: '11',
+    participantId: 1,
+    deviceId: 1,
     from_time: moment().year(2019).month(05).date(12).toISOString(),
     to_time: moment().year(2019).month(07).date(20).toISOString()
   },
   {
-    user_id: '12346',
-    device_id: '11',
+    participantId: 2,
+    deviceId: 1,
     from_time: moment().year(2019).month(12).date(12).toISOString(),
     to_time: moment().year(2019).month(05).date(23).toISOString()
   },
   {
-    user_id: '12347',
-    device_id: '22',
+    participantId: 1,
+    deviceId: 4,
     from_time: moment().year(2019).month(07).date(20).toISOString(),
     to_time: moment().year(2019).month(08).date(14).toISOString()
   },
   {
-    user_id: '12348',
-    device_id: '22',
+    participantId: 3,
+    deviceId: 3,
     from_time: moment().year(2019).month(04).date(12).toISOString(),
     to_time: moment().year(2019).month(09).date(23).toISOString()
-  }])
+  }]);
 
-
-  UserSensors.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
-    .then(() => UserSensors.create({
-      user_id: '12345',
+  await UserSensors.sync({ force: true })
+   // TODO: Remove the forcing soon.. This drops the table
+  UserSensors.hasOne(Devices, {foreignKey: 'id', sourceKey: 'deviceId', as: 'deviceDetails'});
+  UserSensors.hasOne(Participants, {foreignKey: 'id', sourceKey: 'participantId', as: 'participantDetails'});
+  await UserSensors.create({
+      participantId: 1,
+      deviceId: 1, 
       workspace_id: 1,
       s1: 0,
       s2: 0,
@@ -82,7 +100,7 @@ async function seed() {
       s7: 0,
       s8: 0,
       s9: 0
-    }))
+    });
 
   AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
     .then(() => {
@@ -226,5 +244,6 @@ module.exports = {
   GenericLookups: GenericLookups,
   Mappings: Mappings,
   Participants: Participants,
-  UserDevices: UserDevices
+  UserDevices: UserDevices,
+  Devices: Devices
 }

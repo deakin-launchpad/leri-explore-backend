@@ -12,7 +12,10 @@
 const userDeviceService = require('../services/UserDevicesService');
 const async = require('async')
 
-//Method to fetch results from UserDeviceService
+/**
+ * Method to fetch results from UserDeviceService
+ * Author: Somanshu Kalra
+ */
 const getUserDevices = (params, callback) => {
   const device_id = params.device;
   async.series([
@@ -30,7 +33,31 @@ const getUserDevices = (params, callback) => {
   });
 };
 
+
+/**
+ * 
+ * Method to fetch all devices
+ * Author: Somanshu Kalra
+ * 
+ */
+const getAllDevices = (callback) => {
+  async.series([
+    (cb) => {
+      userDeviceService.getAllDevices((err, data) => {
+        if (err) cb(err);
+        else {
+          cb(null, data);
+        }
+      })
+    }
+  ], (err, result) => {
+    if (err) callback(err)
+    else callback(null, { result: result })
+  });
+};
+
 //Exports
 module.exports = {
-  getUserDevices: getUserDevices
+  getUserDevices: getUserDevices,
+  getAllDevices: getAllDevices
 };
