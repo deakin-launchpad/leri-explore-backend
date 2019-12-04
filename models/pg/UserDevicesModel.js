@@ -18,14 +18,22 @@ class UserDevices extends Sequelize.Model { }
 UserDevices.init({
     //Defining user_id attribute (required and not null)  
     participantId: {type: Sequelize.INTEGER, required: true, allowNull: false, references:{
+
+      //Reference to the model
       model: 'participants',
+
+      //Specifying the attribute the reference points to
       key: 'id'
     }
 },
     
     //Defining device_id attribute (required and not null)
     deviceId: {type: Sequelize.INTEGER, required: true, allowNull: false, references:{
+      
+      //Reference to the model
       model: 'devices',
+
+      //Specifying the attribute the reference points to
       key: 'id'
     }
   },
@@ -37,6 +45,5 @@ UserDevices.init({
     to_time: {type: 'TIMESTAMP', required: false, allowNull: true}
 },{ sequelize: sequelizeInstance, modelName: 'user_devices' });
 
-
-
+//Module Export
 module.exports = UserDevices;

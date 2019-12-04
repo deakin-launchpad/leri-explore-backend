@@ -86,19 +86,18 @@ async function seed() {
   await UserSensors.sync({ force: true })
    // TODO: Remove the forcing soon.. This drops the table
   UserSensors.hasOne(Devices, {foreignKey: 'id', sourceKey: 'deviceId', as: 'deviceDetails'});
-  UserSensors.hasOne(Participants, {foreignKey: 'id', sourceKey: 'participantId', as: 'participantDetails'});
   await UserSensors.create({
-      participantId: 1,
+      user_id: 'NEO1C51100242',
       deviceId: 1, 
       workspace_id: 1,
       s1: 0,
       s2: 0,
       s3: 0,
       s4: 0,
-      s5: 0,
-      s6: 0,
+      s5: 15,
+      s6: 20,
       s7: 0,
-      s8: 0,
+      s8: 10,
       s9: 0
     });
 

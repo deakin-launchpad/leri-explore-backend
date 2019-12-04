@@ -15,14 +15,11 @@ UserSensors.init({
       key: 'id'
     }
   },
-  participantId: {
-    type: Sequelize.INTEGER,
+  user_id: {
+    type: Sequelize.STRING,
     allowNull: false,
     required: true,
-    references:{
-      model: 'participants',
-      key: 'id'
-    }},
+    },
 
   deviceId: {type: Sequelize.INTEGER,
     allowNull: false,
