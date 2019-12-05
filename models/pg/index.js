@@ -14,7 +14,8 @@ const Participants = require('./ParticipantsModel')
 const UserDevices = require('./UserDevicesModel');
 //Importing DevicesModel
 const Devices = require('./DevicesModel');
-
+//Importing SensorFieldMappingModel
+const SensorFieldMapping = require('./SensorFieldMappingModel'); 
 
 async function seed() {
   if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'development') return
@@ -43,9 +44,52 @@ async function seed() {
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 1 })
   await ResearcherWorkspaces.create({ workspace_id: 3, researcher_id: 2 })
 
+  //Creating new table to store mapping of sensors 
+  await SensorFieldMapping.sync({force: true});
+  await SensorFieldMapping.bulkCreate([
+    {
+      fieldName: 'Axis 1(y)',
+      alias: 's1'
+    },
+    {
+      fieldName: 'Axis 2(x)',
+      alias: 's2'
+    },
+    {
+      fieldName: 'Axis 3(z)',
+      alias: 's3'
+    },
+    {
+      fieldName: 'Vector Magnitude',
+      alias: 's4'
+    },
+    {
+      fieldName: 'Steps',
+      alias: 's5'
+    },
+    {
+      fieldName: 'Lux',
+      alias: 's6'
+    },
+    {
+      fieldName: 'Inclinometer Off (sec)',
+      alias: 's7'
+    },
+    {
+      fieldName: 'Inclinometer Standing (sec)',
+      alias: 's8'
+    },
+    {
+      fieldName: 'Inclinometer Sitting (sec)',
+      alias: 's9'
+    },
+    {
+      fieldName: 'Inclinometer Lying (sec)',
+      alias: 's10'
+    }]);
   //Creating new table to store device ids
   await Devices.sync({force: true});
-  await Devices.bulkCreate([{device_id: '1a'}, {device_id: '1b'}, {device_id: '2a'}, {device_id: '2b'}]);
+  await Devices.bulkCreate([{device_id: 'NEO1C51100242'}, {device_id: 'NEO1C51100243'}, {device_id: 'NEO1C51100244'}, {device_id: 'NEO1C51100245'}]);
 
   //Creating participants table //TODO: Fetch email id and age from mongo db to populate participants data
   await Participants.sync({force: true});
@@ -56,7 +100,6 @@ async function seed() {
 
   //Creating new table for User Devices model and adding demo values
   await UserDevices.sync({ force: true });
-  //UserDevices.hasOne(Devices, { foreignKey: 'deviceId'});
   UserDevices.hasOne(Participants, {foreignKey: 'id', sourceKey: 'participantId', as: 'participant_details'});
   await UserDevices.bulkCreate([{
     participantId: 1,
@@ -86,20 +129,33 @@ async function seed() {
   await UserSensors.sync({ force: true })
    // TODO: Remove the forcing soon.. This drops the table
   UserSensors.hasOne(Devices, {foreignKey: 'id', sourceKey: 'deviceId', as: 'deviceDetails'});
-  await UserSensors.create({
-      user_id: 'NEO1C51100242',
+  await UserSensors.bulkCreate([{
+      user_id: '12345',
       deviceId: 1, 
       workspace_id: 1,
-      s1: 0,
-      s2: 0,
-      s3: 0,
-      s4: 0,
-      s5: 15,
-      s6: 20,
+      s1: 21,
+      s2: 226,
+      s3: 75,
+      s4: 239,
+      s5: 1,
+      s6: 0,
       s7: 0,
-      s8: 10,
-      s9: 0
-    });
+      s8: 7,
+      s9: 8
+    },{
+      user_id: '12345',
+      deviceId: 1, 
+      workspace_id: 1,
+      s1: 1,
+      s2: 0,
+      s3: 148,
+      s4: 148,
+      s5: 0,
+      s6: 0,
+      s7: 0,
+      s8: 0,
+      s9: 15
+    }]);
 
   AgeActivityRangeLookups.sync({ force: true }) // TODO: Remove the forcing soon.. This drops the table
     .then(() => {
@@ -244,5 +300,6 @@ module.exports = {
   Mappings: Mappings,
   Participants: Participants,
   UserDevices: UserDevices,
-  Devices: Devices
+  Devices: Devices,
+  SensorFieldMapping: SensorFieldMapping
 }

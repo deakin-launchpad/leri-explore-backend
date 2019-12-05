@@ -12,5 +12,6 @@ module.exports = {
   GenericLookupsController: require('./genericLookupsController'),
   MappingsController: require('./mappingsController'),
   ParticipantsController: require('./participantsController'),
-  UserDevicesController: require('./userDevicesController')
+  UserDevicesController: require('./userDevicesController'),
+  FilterDataController: require('./filterDataController')
 }

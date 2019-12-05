@@ -35,7 +35,7 @@ module.exports.getAll = function (request, callback) {
       result = result.map(i => {
         i.age = 22
         i.school_id = 1
-        i.user_id = 'NEO1C51100242'
+        i.user_id = '12345'
         return i
       })
       callback(null, result)

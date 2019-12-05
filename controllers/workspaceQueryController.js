@@ -227,6 +227,7 @@ module.exports.uploadFile = function (request, callback) {
       fields: [
         "workspace_id",
         "user_id",
+        "deviceId",
         "timestamp",
         "s1",
         "s2",
@@ -254,7 +255,7 @@ module.exports.postQueryV2 = async function (request, callback) {
     generatedQueries.push(value)
   }
   if (!request.payload.run) return callback(null, generatedQueries)
-
+  console.log(generatedQueries)
   for (let i = 0; i < generatedQueries.length; ++i) {
     let value = await sequelizeInstance.query(generatedQueries[i])
     finalData.push({

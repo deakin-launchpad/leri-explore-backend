@@ -7,5 +7,6 @@
 'use strict';
 
 module.exports = {
-    UserDeviceService: require('./UserDevicesService')
+    UserDeviceService: require('./UserDevicesService'),
+    FilterDataService: require('./FilterDataService')
 };

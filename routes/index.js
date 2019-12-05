@@ -10,7 +10,8 @@ module.exports = [].concat(
   require('./genericLookupsRoutes'),
   require('./mappingsRoutes'),
   require('./participantsRoutes'),
-  require('./userDevicesRoutes')
+  require('./userDevicesRoutes'),
+  require('./filterRoutes')
 )
 
 if (process.env === 'test' || 'dev' || 'development') {
