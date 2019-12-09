@@ -295,7 +295,8 @@ const v2Query = {
         run: Joi.boolean().default(false).description("Do you want to run the query?"),
         groups: Joi.array(),
         users: Joi.array().min(1),
-        having: Joi.string()
+        having: Joi.string(),
+        filter: Joi.string()
       },
       failAction: HELPER.failActionFunction,
       headers: HELPER.authorizationHeaderObj
