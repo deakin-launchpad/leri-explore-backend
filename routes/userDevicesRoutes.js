@@ -17,7 +17,7 @@ const UserDevicesController = require("../controllers").UserDevicesController;
  * 
  * Method to fetch all users associated with a device
  * Author: Somanshu Kalra
- * 
+ * @todo Configure appropriate success message
  */
 const fetchUserDevices = {
   method: "GET",
@@ -33,7 +33,6 @@ const fetchUserDevices = {
           //If received error, return error response 
           if (err) return reject(HELPER.sendError(err))
           //Else return success resolve 
-          //TODO: Configure appropriate success message 
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           );
@@ -61,7 +60,7 @@ const fetchUserDevices = {
  * 
  * Method to fetch all devices registered
  * Author: Somanshu Kalra
- * 
+ * @todo Configure appropriate success message
  */
 const getAllDevices = {
   method: 'GET',
@@ -76,8 +75,7 @@ const getAllDevices = {
           //Call UserDevicesController to get list of all device
           //If received error, return error response 
           if (err) return reject(HELPER.sendError(err))
-          //Else return success resolve 
-          //TODO: Configure appropriate success message 
+          //Else return success resolve  
           resolve(
             HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
           );
@@ -98,7 +96,54 @@ const getAllDevices = {
   }
 };
 
+/**
+ * 
+ * Method to create a user and device usage information and save it to DB
+ * Author: Somanshu Kalra
+ * @todo: complete this later.
+ */
+const createUserDevices = {
+  method: "POST",
+  path: "/api/user_devices",
+  config: {
+    description: "Create Users aand devices associated with them",
+    auth: 'UserAuth',
+    tags: ["api", "user_devices"],
+    handler: (request, h) => {
+      return new Promise((resolve, reject) => {
+        UserDevicesController.createUserDevices(request.payload, (err, data) => {
+          //Call UserDevicesController to get list of users linked with a device
+          //If received error, return error response 
+          if (err) return reject(HELPER.sendError(err))
+          //Else return success resolve 
+          //TODO: Configure appropriate success message 
+          resolve(
+            HELPER.sendSuccess(Config.APP_CONSTANTS.STATUS_MSG.SUCCESS.DEFAULT, data)
+          );
+        });
+      });
+
+    },
+    validate: {
+      payload: {
+        participant_id: Joi.string().required(),
+        device_id: Joi.number().required(),
+        from: Joi.date().required(),
+        to: Joi.date().required()
+      },
+      headers: HELPER.authorizationHeaderObj,
+      failAction: HELPER.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          HELPER.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
 //Export functions
-module.exports = [ fetchUserDevices, getAllDevices ]
+module.exports = [ fetchUserDevices, getAllDevices, createUserDevices ]
     
 

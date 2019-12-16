@@ -1,4 +1,7 @@
 version: "3"
+volumes:
+  mongodb_data:
+    driver: local
 
 services:
   app:
@@ -25,13 +28,15 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
 
   mongo:
     container_name: mongo
     image: mongo:latest
     restart: always
     volumes:
-      - ./data/mongo:/data/db
+      - mongodb_data:/data/db
     ports:
       - "27017:27017"
     # environment:

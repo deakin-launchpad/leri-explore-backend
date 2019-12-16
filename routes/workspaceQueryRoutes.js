@@ -296,7 +296,7 @@ const v2Query = {
         groups: Joi.array(),
         users: Joi.array().min(1),
         having: Joi.string(),
-        filter: Joi.string()
+        filter: Joi.string().allow('')
       },
       failAction: HELPER.failActionFunction,
       headers: HELPER.authorizationHeaderObj

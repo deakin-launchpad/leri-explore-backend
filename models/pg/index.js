@@ -187,8 +187,10 @@ async function seed() {
       AgeActivityRangeLookups.bulkCreate(allObjs)
 
     })
-
-  SchoolPeriodLookups.sync({ force: true })
+    /**
+   * @todo: Remove commenting if required for school period mapping
+   */
+  /*SchoolPeriodLookups.sync({ force: true })
     .then(() => {
       let allObjs = [], i, j
 
@@ -204,18 +206,21 @@ async function seed() {
       }
 
       SchoolPeriodLookups.bulkCreate(allObjs)
-    })
+    })*/
 
+    /**
+   * @todo: Remove commenting if required for school period mapping
+   */
   await Mappings.sync({ force: true })
   await Mappings.bulkCreate([
-    {
+    /*{
       map_name: "school_periods_map",
       end_as: "school_periods",
       eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
       eval_expr_type: "range",
       lookup_key: "school_id",
       group_bys: ["year", "month", "day", "hour", "school_periods"]
-    },
+    },*/
     {
       map_name: "activity_ranges_map",
       end_as: "activity_ranges",
@@ -223,14 +228,25 @@ async function seed() {
       eval_expr_type: "range",
       lookup_key: "age",
       group_bys: ["activity_ranges"]
+    },
+    {
+      map_name: "time_slots_map",
+      end_as: "time_slots",
+      eval_expr: "WHEN (extract(minute FROM timestamp)::int /!@#$timePeriod ) = !@#$index THEN '!@#$start - !@#$end'",
+      eval_expr_type: "range",
+      lookup_key: "time_slots",
+      group_bys: ["hour_stamp"]
     }
-  ])
+  ])*
 
+  /**
+   * @todo: Remove commenting if required for school period mapping
+   */
   await GenericLookups.sync({ force: true })
     .then(() => {
       let allObjs = []
 
-      for (let i = 0; i < 10; ++i) {
+      /*for (let i = 0; i < 10; ++i) {
         for (let j = 0; j < 10; ++j) {
           allObjs.push({
             map_id: 1,
@@ -247,7 +263,7 @@ async function seed() {
             })
           })
         }
-      }
+      }*/
 
       let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
       for (let i = 0; i < 100; ++i) { // loop for ages
@@ -264,7 +280,7 @@ async function seed() {
 
         keys.forEach((k, j) => {
           allObjs.push({
-            map_id: 2,
+            map_id: 1,
             entity_id: i + 1,
             // entity_name: "age",
             lookup_name: "default_age_activities_lookup",
@@ -279,6 +295,27 @@ async function seed() {
           })
         })
       }
+      //Defining mapping for time_slots 10 minutes, 20 minutes and 30 minutes
+      let time_periods = [10, 20, 30];
+      time_periods.forEach((val, index) => {
+        for( let i = 0; i < 60/val; i++ ){
+        allObjs.push({
+          map_id: 2,
+          entity_id: index,
+          lookup_name: "default_time_slots_map",
+          criteria_type: "range",
+          data_type: "string",
+          criteria: JSON.stringify({
+            timePeriod: val,
+            index: i,
+            start: i*val +':00',
+            end: (i+1)*val + ':00'
+            })
+          })
+        }
+      });
+
+
 
       GenericLookups.bulkCreate(allObjs)
     })
@@ -295,7 +332,7 @@ module.exports = {
   WorkspaceQueries: WorkspaceQueries,
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,
-  SchoolPeriodLookups: SchoolPeriodLookups,
+  //SchoolPeriodLookups: SchoolPeriodLookups,
   GenericLookups: GenericLookups,
   Mappings: Mappings,
   Participants: Participants,

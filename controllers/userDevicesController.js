@@ -38,7 +38,7 @@ const getUserDevices = (params, callback) => {
  * 
  * Method to fetch all devices
  * Author: Somanshu Kalra
- * 
+ * @param callback
  */
 const getAllDevices = (callback) => {
   async.series([
@@ -56,8 +56,32 @@ const getAllDevices = (callback) => {
   });
 };
 
+/**
+ * Method to call createUserDevices service to store user and devices information in the database.
+ * Author: Somanshu Kalra
+ * @param payload 
+ * @param callback 
+ * @todo complete afterwards
+ */
+const createUserDevices = (payload, callback) => {
+    async.series([
+      (cb) => {
+        userDeviceService.createUserDevices(payload, (err, data) => {
+          if (err) cb(err);
+          else {
+            cb(null, data);
+          }
+        })
+      }
+    ], (err, result) => {
+      if (err) callback(err)
+      else callback(null, { result: result })
+    });
+  };
+
 //Exports
 module.exports = {
   getUserDevices: getUserDevices,
-  getAllDevices: getAllDevices
+  getAllDevices: getAllDevices,
+  createUserDevices: createUserDevices
 };

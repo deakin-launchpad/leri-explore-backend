@@ -63,8 +63,55 @@ const getAllDevices = (callback) => {
 
 };
 
+/**
+ * Method to create user and device information in DB. Interacts with userDevices Model
+ * @param payload 
+ * @param callback 
+ */
+const createUserDevices = (payload, callback) => {
+  // Adding user details with participantId, deviceId,from_time and to_time
+  userDevicesModel.create({
+    participantId: payload.participant_id,
+    deviceId: payload.device_id,
+    from_time: payload.from,
+    to_time: payload.to
+  }).then(data => {
+      //If user is created successfully, return results
+      return callback(null,data);
+  }).catch(err => {
+      //If error returned, display appropriate error message
+      return callback(err);
+  })
+};
+
+/**
+ * Method to update user and device details in DB. Interacts with userDevices model. 
+ * @param payload 
+ * @param callback 
+ */
+const updateUserDevices = (request, callback) => {
+  // Updating 
+  userDevicesModel.update({
+    participantId: request.payload.participant_id,
+    deviceId: request.payload.device_id,
+    from_time: request.payload.from,
+    to_time: request.payload.to
+  },{
+    where: {
+      id: request.params.id 
+    }
+  }
+).then(data => {
+    callback(null,data);
+  }).catch(err => {
+    callback(error);
+  })
+};
+
 //Exports
 module.exports = {
     getDevices: getDevices,
-    getAllDevices: getAllDevices
+    getAllDevices: getAllDevices,
+    createUserDevices: createUserDevices,
+    updateUserDevices: updateUserDevices
 };
