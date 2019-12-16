@@ -5,7 +5,6 @@ const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 
 module.exports.createWorkspace = function (request, callback) {
   const userData = request.auth && request.auth.credentials && request.auth.credentials.userData
-  console.log(userData)
 
   let researcher_id, finalData
 

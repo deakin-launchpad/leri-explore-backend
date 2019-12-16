@@ -219,31 +219,54 @@ module.exports.delete = function (request, callback) {
     })
 }
 
+/**
+ * Checks if the devices table contains the uploaded device data or not. If yes, returns the device id else creates a new entry in the device table.
+ * After that adds sensor data to user_sensor table.
+ *  
+ */
 module.exports.uploadFile = function (request, callback) {
   Parser.processFile(request, (err, data) => {
     if (err) return callback(err)
-
-    MODELS.UserSensors.bulkCreate(data, {
-      fields: [
-        "workspace_id",
-        "user_id",
-        "deviceId",
-        "timestamp",
-        "s1",
-        "s2",
-        "s3",
-        "s4",
-        "s5",
-        "s6",
-        "s7",
-        "s8",
-        "s9"
-      ]
-    }).then(() => {
-      callback()
-    }).catch(err => {
-      callback(JSON.stringify(err))
-    })
+    const deviceId = data[0] ? data[0].deviceId : callback(JSON.stringify('Unable to fetch device id from uploaded file'));
+    MODELS.Devices.findOrCreate({
+      where: {
+        device_id: deviceId
+      }
+    }).then(dat => {
+      if (dat[1] === false) return callback({
+        "statusCode": 400,
+        "error": "Bad Request",
+        "customMessage": `Unable to add device information`
+      })
+      data.forEach(obj => {
+        obj.deviceId = dat[0].id
+        }
+      );
+      MODELS.UserSensors.bulkCreate(data, {
+        fields: [
+          "workspace_id",
+          "user_id",
+          "deviceId",
+          "timestamp",
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9"
+        ]
+      }).then(() => {
+        callback()
+      }).catch(err => {
+        callback(JSON.stringify(err))
+      })
+    } 
+    ).catch(err => {
+      callback(JSON.stringify(err));
+    });
   })
 }
 

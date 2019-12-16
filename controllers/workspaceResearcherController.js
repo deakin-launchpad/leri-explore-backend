@@ -78,7 +78,6 @@ module.exports.getAllWorkspaceResearchers = function (request, callback) {
 
       callback(null, data)
     }).catch(err => {
-      console.log(err)
       callback(JSON.stringify(err))
     })
 }
