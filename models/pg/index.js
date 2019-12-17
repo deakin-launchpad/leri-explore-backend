@@ -48,7 +48,7 @@ async function seed() {
   await SensorFieldMapping.sync({force: true});
   await SensorFieldMapping.bulkCreate([
     {
-      fieldName: 'Axis 1(y)',
+      fieldName: 'Activity',
       alias: 's1'
     },
     {
@@ -60,11 +60,11 @@ async function seed() {
       alias: 's3'
     },
     {
-      fieldName: 'Vector Magnitude',
+      fieldName: 'Steps',
       alias: 's4'
     },
     {
-      fieldName: 'Steps',
+      fieldName: 'Heart Rate',
       alias: 's5'
     },
     {
@@ -72,20 +72,16 @@ async function seed() {
       alias: 's6'
     },
     {
-      fieldName: 'Inclinometer Off (sec)',
+      fieldName: 'Inclinometer Standing (sec)',
       alias: 's7'
     },
     {
-      fieldName: 'Inclinometer Standing (sec)',
+      fieldName: 'Inclinometer Sitting (sec)',
       alias: 's8'
     },
     {
-      fieldName: 'Inclinometer Sitting (sec)',
-      alias: 's9'
-    },
-    {
       fieldName: 'Inclinometer Lying (sec)',
-      alias: 's10'
+      alias: 's9'
     }]);
   //Creating new table to store device ids
   await Devices.sync({force: true});
@@ -187,10 +183,8 @@ async function seed() {
       AgeActivityRangeLookups.bulkCreate(allObjs)
 
     })
-    /**
-   * @todo: Remove commenting if required for school period mapping
-   */
-  /*SchoolPeriodLookups.sync({ force: true })
+  
+  SchoolPeriodLookups.sync({ force: true })
     .then(() => {
       let allObjs = [], i, j
 
@@ -206,21 +200,19 @@ async function seed() {
       }
 
       SchoolPeriodLookups.bulkCreate(allObjs)
-    })*/
+    })
 
-    /**
-   * @todo: Remove commenting if required for school period mapping
-   */
+    
   await Mappings.sync({ force: true })
   await Mappings.bulkCreate([
-    /*{
+    {
       map_name: "school_periods_map",
       end_as: "school_periods",
       eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
       eval_expr_type: "range",
       lookup_key: "school_id",
       group_bys: ["year", "month", "day", "hour", "school_periods"]
-    },*/
+    },
     {
       map_name: "activity_ranges_map",
       end_as: "activity_ranges",
@@ -239,14 +231,12 @@ async function seed() {
     }
   ])*
 
-  /**
-   * @todo: Remove commenting if required for school period mapping
-   */
+
   await GenericLookups.sync({ force: true })
     .then(() => {
       let allObjs = []
 
-      /*for (let i = 0; i < 10; ++i) {
+      for (let i = 0; i < 10; ++i) {
         for (let j = 0; j < 10; ++j) {
           allObjs.push({
             map_id: 1,
@@ -263,7 +253,7 @@ async function seed() {
             })
           })
         }
-      }*/
+      }
 
       let keys = [1, 2, 3, 4, 5, 6, 7, 8, 9]
       for (let i = 0; i < 100; ++i) { // loop for ages
@@ -280,7 +270,7 @@ async function seed() {
 
         keys.forEach((k, j) => {
           allObjs.push({
-            map_id: 1,
+            map_id: 2,
             entity_id: i + 1,
             // entity_name: "age",
             lookup_name: "default_age_activities_lookup",
@@ -300,7 +290,7 @@ async function seed() {
       time_periods.forEach((val, index) => {
         for( let i = 0; i < 60/val; i++ ){
         allObjs.push({
-          map_id: 2,
+          map_id: 3,
           entity_id: index,
           lookup_name: "default_time_slots_map",
           criteria_type: "range",
@@ -332,7 +322,7 @@ module.exports = {
   WorkspaceQueries: WorkspaceQueries,
   UserSensors: UserSensors,
   AgeActivityRangeLookups: AgeActivityRangeLookups,
-  //SchoolPeriodLookups: SchoolPeriodLookups,
+  SchoolPeriodLookups: SchoolPeriodLookups,
   GenericLookups: GenericLookups,
   Mappings: Mappings,
   Participants: Participants,
