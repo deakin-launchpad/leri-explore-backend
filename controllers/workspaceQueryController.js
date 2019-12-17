@@ -271,21 +271,27 @@ module.exports.uploadFile = function (request, callback) {
 }
 
 module.exports.postQueryV2 = async function (request, callback) {
-  let generatedQueries = [], finalData = []
+  let generatedQueries = [], finalData = [], value = []
   for (let i = 0; i < request.payload.users.length; ++i) {
     let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
     if (err) return callback(err)
     generatedQueries.push(value)
+    let [error, visualization] = await queryGenerator.getVisualizationData(request.payload.users[i]);
+    if(err) return callback(err)
+    generatedQueries.push(visualization);
   }
   if (!request.payload.run) return callback(null, generatedQueries)
-  console.log(generatedQueries)
+  console.log('generated queries', generatedQueries)
   for (let i = 0; i < generatedQueries.length; ++i) {
-    let value = await sequelizeInstance.query(generatedQueries[i])
-    finalData.push({
-      user_id: request.payload.users[i].id,
-      data: value[0]
-    })
+    value.push(await sequelizeInstance.query(generatedQueries[i]))
   }
 
+  for (let i = 0; i < request.payload.users.length; i++) {    
+    finalData.push({
+      user_id: request.payload.users[i].id,
+      data: value[i],
+      visualization_map: value[i+1] 
+    })
+  }
   return callback(null, finalData)
 }
