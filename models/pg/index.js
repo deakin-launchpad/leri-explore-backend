@@ -126,7 +126,7 @@ async function seed() {
    // TODO: Remove the forcing soon.. This drops the table
   UserSensors.hasOne(Devices, {foreignKey: 'id', sourceKey: 'deviceId', as: 'deviceDetails'});
   await UserSensors.bulkCreate([{
-      user_id: '12345',
+      user_id: '12346',
       deviceId: 1, 
       workspace_id: 1,
       s1: 21,
@@ -139,10 +139,23 @@ async function seed() {
       s8: 7,
       s9: 8
     },{
-      user_id: '12345',
+      user_id: '12346',
       deviceId: 1, 
       workspace_id: 1,
-      s1: 1,
+      s1: 200,
+      s2: 0,
+      s3: 148,
+      s4: 148,
+      s5: 0,
+      s6: 0,
+      s7: 0,
+      s8: 0,
+      s9: 15
+    },{
+      user_id: '12346',
+      deviceId: 1, 
+      workspace_id: 1,
+      s1: 250,
       s2: 0,
       s3: 148,
       s4: 148,

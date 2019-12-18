@@ -233,11 +233,6 @@ module.exports.uploadFile = function (request, callback) {
         device_id: deviceId
       }
     }).then(dat => {
-      if (dat[1] === false) return callback({
-        "statusCode": 400,
-        "error": "Bad Request",
-        "customMessage": `Unable to add device information`
-      })
       data.forEach(obj => {
         obj.deviceId = dat[0].id
         }
@@ -270,28 +265,34 @@ module.exports.uploadFile = function (request, callback) {
   })
 }
 
+/**
+ * Description: Method to execute custom created queries.
+ * 
+ */
 module.exports.postQueryV2 = async function (request, callback) {
-  let generatedQueries = [], finalData = [], value = []
+  let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = []
   for (let i = 0; i < request.payload.users.length; ++i) {
     let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
     if (err) return callback(err)
     generatedQueries.push(value)
-    let [error, visualization] = await queryGenerator.getVisualizationData(request.payload.users[i]);
-    if(err) return callback(err)
-    generatedQueries.push(visualization);
+    //Fetch query for visualization
+    let [error, visualization] = await queryGenerator.getVisualizationData(request.payload, request.payload.users[i]);
+    if(error) return callback(error)
+    generatedQueries_visualization.push(visualization);
   }
   if (!request.payload.run) return callback(null, generatedQueries)
-  console.log('generated queries', generatedQueries)
-  for (let i = 0; i < generatedQueries.length; ++i) {
-    value.push(await sequelizeInstance.query(generatedQueries[i]))
-  }
 
-  for (let i = 0; i < request.payload.users.length; i++) {    
+  for (let i = 0; i < generatedQueries.length; ++i) {
+    let value = await sequelizeInstance.query(generatedQueries[i])
+    let visualization_value = await sequelizeInstance.query(generatedQueries_visualization[i]);
+    final_visualization.push({
+      user_id: request.payload.users[i].id,
+      data: visualization_value[0]
+    })
     finalData.push({
       user_id: request.payload.users[i].id,
-      data: value[i],
-      visualization_map: value[i+1] 
+      data: value[0]
     })
   }
-  return callback(null, finalData)
+  return callback(null, {result: finalData, visualization_map: final_visualization});
 }
