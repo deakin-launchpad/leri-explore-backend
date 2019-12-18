@@ -31,11 +31,12 @@ module.exports.getAll = function (request, callback) {
 
     mongoConn.db("ipan-v2-backend").collection("users").find({}, options).toArray((err, result) => {
       if (err) return callback(err)
-
+      var num = 12345;
       result = result.map(i => {
         i.age = 22
         i.school_id = 1
-        i.user_id = '12345'
+        i.user_id = num.toString();
+        num++;
         return i
       })
       callback(null, result)
