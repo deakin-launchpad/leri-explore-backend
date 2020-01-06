@@ -272,7 +272,7 @@ module.exports.uploadFile = function (request, callback) {
 module.exports.postQueryV2 = async function (request, callback) {
   let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = []
   const template = {
-    'userid': 'User ID',
+    'User ID': 'userid',
     'Sensor Details': {$path: 'data[]', $formatting: (value) => {return value; }}
   };
 
@@ -288,9 +288,7 @@ module.exports.postQueryV2 = async function (request, callback) {
   if (!request.payload.run) return callback(null, generatedQueries)
 
   for (let i = 0; i < generatedQueries.length; ++i) {
-    console.log(generatedQueries[i]);
     let value = await sequelizeInstance.query(generatedQueries[i])
-    console.log(value)
     let visualization_value = await sequelizeInstance.query(generatedQueries_visualization[i]);
     final_visualization.push({
       user_id: request.payload.users[i].id,
