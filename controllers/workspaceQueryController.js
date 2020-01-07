@@ -274,7 +274,7 @@ module.exports.uploadFile = function (request, callback) {
 module.exports.postQueryV2 = async function (request, callback) {
   let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = [], finalDataV2 = [];
   const template = {
-    'User ID': 'userid',
+    'User ID': 'user_id',
     'Sensor Details': {$path: 'data[]', $formatting: (value) => {return value; }}
   };
 
@@ -305,6 +305,6 @@ module.exports.postQueryV2 = async function (request, callback) {
   finalData.forEach(element => {
     finalDataV2.push(json2json(element, template))
   });
-  
+
   return callback(null, { result: finalDataV2, visualization_map: final_visualization, template: 'leri-explore-template'});
 }
