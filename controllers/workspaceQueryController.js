@@ -48,19 +48,19 @@ const PredefinedParameterizedQueries = {
     groupsSet.forEach(group => {
       switch (group) {
         case "year":
-          projections.push("date_part('year', t.tstp) as year")
+          projections.push("date_part('year', t.timeStamp) as year")
           groupBys.push("year")
           break
         case "month":
-          projections.push("date_part('month', t.tstp) as month")
+          projections.push("date_part('month', t.timeStamp) as month")
           groupBys.push("month")
           break
         case "day":
-          projections.push("date_part('day', t.tstp) as day")
+          projections.push("date_part('day', t.timeStamp) as day")
           groupBys.push("day")
           break
         case "hour":
-          projections.push("date_part('hour', t.tstp) as hour")
+          projections.push("date_part('hour', t.timeStamp) as hour")
           groupBys.push("hour")
           break
         case "periods":
@@ -77,7 +77,7 @@ const PredefinedParameterizedQueries = {
           request.payload.query.data.periods.forEach(item => {
             if (item.range_name && item.from && item.to) {
               preparePeriods.push(
-                `when foo.tstp::time BETWEEN \
+                `when foo.timeStamp::time BETWEEN \
                 TIME '${item.from}' AND TIME '${item.to}' \
                 THEN '${item.range_name}'`)
             }
@@ -105,9 +105,9 @@ const PredefinedParameterizedQueries = {
           ${prepareCases.join(' ')} \
           end as range, \
           ${finalPreparedPeriodsStatement ? finalPreparedPeriodsStatement : ''} \
-          c, tstp \
+          c, timeStamp \
           from ( \
-            select s${request.payload.query.data.sensor} as c, timestamp as tstp from user_sensors where workspace_id = request.params.id \
+            select s${request.payload.query.data.sensor} as c, timestamp as timeStamp from user_sensors where workspace_id = request.params.id \
           ) as foo \
       ) as t \
       group by \
@@ -195,10 +195,10 @@ module.exports.put = function (request, callback) {
   MODELS.WorkspaceQueries.update({
     ...request.payload
   }, {
-      where: {
-        id: request.params.id
-      }
-    })
+    where: {
+      id: request.params.id
+    }
+  })
     .then(data => {
       callback(null, data)
     }).catch(err => {
@@ -235,7 +235,7 @@ module.exports.uploadFile = function (request, callback) {
     }).then(dat => {
       data.forEach(obj => {
         obj.deviceId = dat[0].id
-        }
+      }
       );
       MODELS.UserSensors.bulkCreate(data, {
         fields: [
@@ -258,7 +258,7 @@ module.exports.uploadFile = function (request, callback) {
       }).catch(err => {
         callback(JSON.stringify(err))
       })
-    } 
+    }
     ).catch(err => {
       callback(JSON.stringify(err));
     });
@@ -269,20 +269,19 @@ module.exports.uploadFile = function (request, callback) {
  * Description: Method to execute custom created queries.
  * 
  */
+
 module.exports.postQueryV2 = async function (request, callback) {
   let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = []
-  const template = {
-    'User ID': 'userid',
-    'Sensor Details': {$path: 'data[]', $formatting: (value) => {return value; }}
-  };
+  const template = "{ 'User ID': 'userid', 'Sensor Details': { $path: 'data[]', $formatting: (value) => { return value; } } }";
 
+  console.log(request.payload);
   for (let i = 0; i < request.payload.users.length; ++i) {
     let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
     if (err) return callback(err)
     generatedQueries.push(value)
     //Fetch query for visualization
     let [error, visualization] = await queryGenerator.getVisualizationData(request.payload, request.payload.users[i]);
-    if(error) return callback(error)
+    if (error) return callback(error)
     generatedQueries_visualization.push(visualization);
   }
   if (!request.payload.run) return callback(null, generatedQueries)
@@ -300,5 +299,5 @@ module.exports.postQueryV2 = async function (request, callback) {
     })
   }
   console.log(finalData);
-  return callback(null, {result: finalData, visualization_map: final_visualization, template: template});
+  return callback(null, { result: finalData, visualization_map: final_visualization, template: template});
 }

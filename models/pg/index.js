@@ -141,7 +141,7 @@ async function seed() {
     },{
       user_id: '12346',
       deviceId: 1, 
-      workspace_id: 1,
+      workspace_id: 2,
       s1: 200,
       s2: 0,
       s3: 148,
@@ -154,7 +154,7 @@ async function seed() {
     },{
       user_id: '12346',
       deviceId: 1, 
-      workspace_id: 1,
+      workspace_id: 2,
       s1: 250,
       s2: 0,
       s3: 148,
@@ -221,7 +221,7 @@ async function seed() {
     {
       map_name: "school_periods_map",
       end_as: "school_periods",
-      eval_expr: "WHEN foo.tstp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
+      eval_expr: "WHEN foo.timeStamp::time BETWEEN TIMESTAMP '!@#$min'::time and TIMESTAMP '!@#$max'::time THEN '!@#$range_name'",
       eval_expr_type: "range",
       lookup_key: "school_id",
       group_bys: ["year", "month", "day", "hour", "school_periods"]
