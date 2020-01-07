@@ -6,6 +6,7 @@ const sequelizeInstance = require('../utils/dbHelper').getPGConnection()
 const ERROR = require('../config/appConstants').STATUS_MSG.ERROR
 const async = require('async')
 const queryGenerator = require('../lib/queryGenerator')
+const { default: json2json } = require('awesome-json2json');
 
 module.exports.getAll = function (request, callback) {
   MODELS.WorkspaceQueries.findAll({
@@ -271,7 +272,12 @@ module.exports.uploadFile = function (request, callback) {
  */
 
 module.exports.postQueryV2 = async function (request, callback) {
-  let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = []
+  let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = [], finalDataV2 = [];
+  const template = {
+    'User ID': 'userid',
+    'Sensor Details': {$path: 'data[]', $formatting: (value) => {return value; }}
+  };
+
   for (let i = 0; i < request.payload.users.length; ++i) {
     let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
     if (err) return callback(err)
@@ -295,6 +301,10 @@ module.exports.postQueryV2 = async function (request, callback) {
       data: value[0]
     })
   }
-  console.log(finalData);
-  return callback(null, { result: finalData, visualization_map: final_visualization, template: 'leri-explore-template'});
+  //Using json2json to convert response data to a particular format
+  finalData.forEach(element => {
+    finalDataV2.push(json2json(element, template))
+  });
+  
+  return callback(null, { result: finalDataV2, visualization_map: final_visualization, template: 'leri-explore-template'});
 }
