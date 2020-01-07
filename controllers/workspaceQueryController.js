@@ -272,9 +272,6 @@ module.exports.uploadFile = function (request, callback) {
 
 module.exports.postQueryV2 = async function (request, callback) {
   let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = []
-  const template = "{ 'User ID': 'userid', 'Sensor Details': { $path: 'data[]', $formatting: (value) => { return value; } } }";
-
-  console.log(request.payload);
   for (let i = 0; i < request.payload.users.length; ++i) {
     let [err, value] = await queryGenerator.wrapEverything(request.payload, request.payload.users[i])
     if (err) return callback(err)
@@ -299,5 +296,5 @@ module.exports.postQueryV2 = async function (request, callback) {
     })
   }
   console.log(finalData);
-  return callback(null, { result: finalData, visualization_map: final_visualization, template: template});
+  return callback(null, { result: finalData, visualization_map: final_visualization, template: 'leri-explore-template'});
 }
