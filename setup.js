@@ -53,7 +53,7 @@ async.series([
       port: pgConfig.port,
     })
 
-    console.log(pgConfig)
+    
     await pgConn.connect()
     console.log('PG connected.')
 
@@ -63,7 +63,6 @@ async.series([
     await pgConn.query(`CREATE USER ${pgConfig.username} WITH ENCRYPTED PASSWORD '${pgConfig.password}';`)
     await pgConn.query(`GRANT ALL PRIVILEGES ON DATABASE ${pgConfig.database} TO ${pgConfig.username};`)
 
-    console.log(res.rows[0])
     await pgConn.end()
   }
 ],

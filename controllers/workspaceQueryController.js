@@ -275,7 +275,16 @@ module.exports.postQueryV2 = async function (request, callback) {
   let generatedQueries = [], finalData = [], final_visualization = [], generatedQueries_visualization = [], finalDataV2 = [];
   const template = {
     'User ID': 'user_id',
-    'Sensor Details': {$path: 'data[]', $formatting: (value) => {return value; }}
+    'Sensor Details': {
+      $path: 'data[]', $formatting: (value) => {
+        return ({
+          'Timestamp': value.timestamp,
+          'Selected Sensor': value.selectedsensor,
+          'Activity Range': value.activity_ranges,
+          'School Time Period': value.school_periods
+        })
+      }
+    }
   };
 
   for (let i = 0; i < request.payload.users.length; ++i) {
@@ -306,5 +315,5 @@ module.exports.postQueryV2 = async function (request, callback) {
     finalDataV2.push(json2json(element, template))
   });
 
-  return callback(null, { result: finalDataV2, visualization_map: final_visualization, template: 'leri-explore-template'});
+  return callback(null, { result: finalDataV2, visualization_map: final_visualization });
 }

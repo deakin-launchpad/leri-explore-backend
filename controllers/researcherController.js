@@ -35,13 +35,15 @@ const researcherRegister = (payload, callback) => {
       })
     },
     function (cb) {
+      console.log(payload);
       PG_MODELS.ResearcherEmailLookups.create({
-        emailId: payload.emailId
+        email_id: payload.emailId,
+        name: payload.first_name
       })
         .then(() => {
           cb()
         }).catch(err => {
-          cb(JSON.stringify(err))
+          cb(err)
         })
     },
     function (cb) {
